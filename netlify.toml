@@ -1,6 +1,7 @@
 [build]
   command = "remix build"
   publish = "public"
+  base = "/"
 
 [dev]
   command = "remix watch"
