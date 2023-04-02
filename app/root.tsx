@@ -1,4 +1,4 @@
-import type { MetaFunction } from "@remix-run/node";
+import type { MetaFunction, V2_MetaFunction } from "@remix-run/node";
 import {
   Links,
   LiveReload,
@@ -18,11 +18,13 @@ import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 import type { LinksFunction } from "@remix-run/node";
 import { theme } from "./theme";
 
-export const meta: MetaFunction = () => ({
-  charset: "utf-8",
-  title: "Placement Portal",
-  viewport: "width=device-width,initial-scale=1",
-});
+export const meta: V2_MetaFunction = () => [
+  {
+    charset: "utf-8",
+    title: "Placement Portal",
+    viewport: "width=device-width,initial-scale=1",
+  },
+];
 
 export const links: LinksFunction = () => {
   return [
