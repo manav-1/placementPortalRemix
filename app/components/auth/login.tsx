@@ -17,13 +17,7 @@ export default function Login() {
     <>
       <Navbar />
       <Container size={600} my={40}>
-        <Title
-          align="center"
-          sx={(theme) => ({
-            fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            fontWeight: 900,
-          })}
-        >
+        <Title align="center" weight={900}>
           Welcome back!
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>

@@ -156,13 +156,7 @@ export default function Opportunities() {
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Title
-          order={2}
-          size="h1"
-          mb="md"
-          sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}` })}
-          weight={900}
-        >
+        <Title order={2} size="h1" mb="md" weight={900}>
           Applied Opportunities
         </Title>
       </Grid.Col>

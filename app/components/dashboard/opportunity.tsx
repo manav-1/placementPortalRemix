@@ -177,7 +177,6 @@ export default function Opportunities() {
           order={2}
           size="h1"
           mb="md"
-          sx={(theme) => ({ fontFamily: `Greycliff CF, ${theme.fontFamily}` })}
           weight={900}
         >
           Opportunities

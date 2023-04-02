@@ -7,15 +7,7 @@ export default function Emails() {
     <ClientOnly fallback={null}>
       {() => (
         <div className="App">
-          <Title
-            order={2}
-            size="h1"
-            mb="md"
-            sx={(theme) => ({
-              fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            })}
-            weight={900}
-          >
+          <Title order={2} size="h1" mb="md" weight={900}>
             Email Template Editor
           </Title>
           <Editor />

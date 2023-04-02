@@ -134,15 +134,7 @@ export default function AddOpportunity() {
     <Grid>
       <Grid.Col lg={8} xl={4} md={12} sm={12}>
         <form onSubmit={form.onSubmit(() => {})}>
-          <Title
-            order={2}
-            size="h1"
-            mb="md"
-            sx={(theme) => ({
-              fontFamily: `Greycliff CF, ${theme.fontFamily}`,
-            })}
-            weight={900}
-          >
+          <Title order={2} size="h1" mb="md" weight={900}>
             New Opportunity
           </Title>
           <TextInput
