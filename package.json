@@ -16,7 +16,6 @@
     "@mantine/hooks": "^6.0.5",
     "@mantine/remix": "^6.0.5",
     "@netlify/functions": "^1.3.0",
-    "@remix-run/netlify": "^1.15.0",
     "@remix-run/node": "^1.15.0",
     "@remix-run/react": "^1.15.0",
     "@remix-run/vercel": "^1.15.0",
