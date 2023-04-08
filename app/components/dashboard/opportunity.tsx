@@ -14,7 +14,7 @@ import {
   Grid,
   Title,
 } from "@mantine/core";
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import companyPlaceholder from "../../../assets/company-placeholder.png";
 import type { Key } from "react";
 
@@ -170,15 +170,12 @@ export function OpportunityCard({
 }
 
 export default function Opportunities() {
+  const { opportunities } = useLoaderData();
+
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Title
-          order={2}
-          size="h1"
-          mb="md"
-          weight={900}
-        >
+        <Title order={2} size="h1" mb="md" weight={900}>
           Opportunities
         </Title>
       </Grid.Col>

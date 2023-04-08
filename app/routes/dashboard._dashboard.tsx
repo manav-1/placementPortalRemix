@@ -22,21 +22,18 @@ import {
   IconClipboardText,
   IconUserBolt,
 } from "@tabler/icons-react";
-import { Outlet, useLocation } from "@remix-run/react";
+import {
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+} from "@remix-run/react";
 import Logo from "~/components/landing/logo";
-import { useState } from "react";
-
+import { useEffect, useState } from "react";
 import user from "../../assets/user.png";
+import { dashboardLoader } from "~/components/dashboard/loaders/dashboard";
 
 const useStyles = createStyles((theme) => ({
-  header: {
-    // paddingBottom: theme.spacing.md,
-    // marginBottom: `calc(${theme.spacing.md} * 1.5)`,
-    // borderBottom: `${rem(1)} solid ${
-    //   theme.colorScheme === "dark" ? theme.colors.dark[4] : theme.colors.gray[2]
-    // }`,
-  },
-
   footer: {
     paddingTop: theme.spacing.md,
     marginTop: theme.spacing.md,
@@ -181,6 +178,8 @@ const data = [
   },
 ];
 
+export const loader = dashboardLoader;
+
 export default function DashboardLayout() {
   const { classes } = useStyles();
   const [opened, setOpened] = useState(false);
@@ -194,7 +193,7 @@ export default function DashboardLayout() {
       header={
         <Header height={60} px="md">
           <Group position="apart" className={classes.height100}>
-            <Group className={classes.header} position="apart">
+            <Group position="apart">
               <Logo />
               <Code sx={{ fontWeight: 700 }}>v1.0.0</Code>
             </Group>

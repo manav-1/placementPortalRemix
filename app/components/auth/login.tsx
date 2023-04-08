@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   TextInput,
   PasswordInput,
@@ -11,8 +12,14 @@ import {
   Button,
 } from "@mantine/core";
 import { Navbar } from "../landing/navbar";
+import { Form } from "@remix-run/react";
 
 export default function Login() {
+  const [user, setUser] = useState({
+    email: "",
+    password: "",
+  });
+
   return (
     <>
       <Navbar />
@@ -26,25 +33,40 @@ export default function Login() {
             Create account
           </Anchor>
         </Text>
-
-        <Paper withBorder shadow="md" p={30} mt={30} radius="md">
-          <TextInput label="Email" placeholder="johndoe@example.com" required />
-          <PasswordInput
-            label="Password"
-            placeholder="........."
-            required
-            mt="md"
-          />
-          <Group position="apart" mt="lg">
-            <Checkbox label="Remember me" />
-            <Anchor component="button" size="sm">
-              Forgot password?
-            </Anchor>
-          </Group>
-          <Button fullWidth mt="xl">
-            Login
-          </Button>
-        </Paper>
+        <Form method="POST">
+          <Paper withBorder shadow="md" p={30} mt={30} radius="md">
+            <TextInput
+              label="Email"
+              name="email"
+              placeholder="johndoe@example.com"
+              required
+              value={user.email}
+              onChange={(e) =>
+                setUser({ ...user, email: e.currentTarget.value })
+              }
+            />
+            <PasswordInput
+              label="Password"
+              name="password"
+              placeholder="........."
+              required
+              value={user.password}
+              onChange={(e) =>
+                setUser({ ...user, password: e.currentTarget.value })
+              }
+              mt="md"
+            />
+            <Group position="apart" mt="lg">
+              <Checkbox label="Remember me" />
+              <Anchor component="button" size="sm">
+                Forgot password?
+              </Anchor>
+            </Group>
+            <Button type="submit" fullWidth mt="xl">
+              Login
+            </Button>
+          </Paper>
+        </Form>
       </Container>
     </>
   );
