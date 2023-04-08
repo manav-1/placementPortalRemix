@@ -22,14 +22,9 @@ import {
   IconClipboardText,
   IconUserBolt,
 } from "@tabler/icons-react";
-import {
-  Outlet,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-} from "@remix-run/react";
+import { Outlet, useLocation } from "@remix-run/react";
 import Logo from "~/components/landing/logo";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import user from "../../assets/user.png";
 import { dashboardLoader } from "~/components/dashboard/loaders/dashboard";
 
