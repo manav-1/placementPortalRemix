@@ -224,8 +224,6 @@ const DashNavbar = ({
 
   const [role] = useState(USER_ROLES.SUPER_ADMIN);
 
-  // TODO: Get role from user-api
-
   const links = data
     .filter((item) => item.roles.includes(role))
     .map((item) => (
@@ -252,11 +250,7 @@ const DashNavbar = ({
     >
       <Navbar.Section grow>{links}</Navbar.Section>
       <Navbar.Section className={classes.footer}>
-        <a
-          href="/"
-          className={classes.link}
-          onClick={() => localStorage.removeItem("placementToken")}
-        >
+        <a href="/logout" className={classes.link}>
           <IconLogout className={classes.linkIcon} stroke={1.5} />
           <span>Logout</span>
         </a>

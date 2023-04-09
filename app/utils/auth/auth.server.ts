@@ -1,10 +1,10 @@
 import { prisma } from "prisma/prisma.server";
 import * as bcryptjs from "bcryptjs";
-import { createCookieSessionStorage, redirect } from "@remix-run/node";
+import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
 import type { LoginInput, PropertyInput, RegisterInput } from "./types.server";
 import type { Prisma, User } from "@prisma/client";
 import { createJWTSignedToken, verifyToken } from "../helper/helper.server";
-import { forbidden, notFound, serverError } from "remix-utils";
+import createErrors from "http-errors";
 
 const sessionSecret = process.env.SESSION_SECRET;
 if (!sessionSecret) {
@@ -40,7 +40,7 @@ export async function register(user: RegisterInput) {
     where: existingUserClause,
   });
   if (existingUser) {
-    throw forbidden("User Already Exists");
+    return createErrors[403]("User Already Exists");
   }
   try {
     user.password = await bcryptjs.hash(password, 10);
@@ -53,26 +53,21 @@ export async function register(user: RegisterInput) {
     });
     return createUserSession(createdUser.id, "/dashboard");
   } catch (error) {
-    throw serverError("Server Exception");
+    throw createErrors[500]("Server Exception");
   }
 }
 
 export async function login({ email, password }: LoginInput) {
-  try {
-    const userClause: Prisma.UserWhereUniqueInput = { email };
-    const user = await prisma.user.findUnique({ where: userClause });
-    if (!user) {
-      throw forbidden("User not found");
-    }
-    const isPasswordValid = await bcryptjs.compare(password, user.password);
-    if (!isPasswordValid) {
-      throw forbidden("Password is invalid");
-    }
-    return createUserSession(user.id, "/dashboard");
-  } catch (error) {
-    console.error(error);
-    throw serverError("Server Exception");
+  const userClause: Prisma.UserWhereUniqueInput = { email };
+  const user = await prisma.user.findUnique({ where: userClause });
+  if (!user) {
+    throw await createErrors[404]("User not found");
   }
+  const isPasswordValid = await bcryptjs.compare(password, user.password);
+  if (!isPasswordValid) {
+    throw await createErrors[401]("Password is invalid");
+  }
+  return createUserSession(user.id, "/dashboard");
 }
 
 export async function getProperty({ property }: PropertyInput) {
@@ -83,10 +78,10 @@ export async function getProperty({ property }: PropertyInput) {
     select: { [property]: true, password: false },
   });
   if (!user) {
-    throw forbidden("User not found");
+    throw createErrors[404]("User not found");
   }
   if (!user[property]) {
-    throw forbidden("Property not found");
+    throw createErrors[404]("Property not found");
   }
   return user[property];
 }
@@ -108,7 +103,7 @@ export async function verify(token: string) {
 
 export async function sendVerificationEmail(email: string) {
   const user = await prisma.user.findUnique({ where: { email } });
-  if (!user) throw notFound("User not found");
+  if (!user) throw createErrors[404]("User not found");
 
   try {
     const token = createJWTSignedToken(user);
@@ -164,7 +159,7 @@ export async function requireUserId(
 export async function logout(request: Request) {
   const session = await getUserSession(request);
 
-  return redirect("/login", {
+  return redirect("/", {
     headers: {
       "Set-Cookie": await storage.destroySession(session),
     },
