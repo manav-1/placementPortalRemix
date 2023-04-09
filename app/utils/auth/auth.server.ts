@@ -134,7 +134,7 @@ export async function getUserId(request: Request) {
 export async function getUser(request: Request) {
   const userId = await getUserId(request);
   if (typeof userId !== "string") {
-    throw notFound("User not found");
+    return null;
   }
 
   try {
@@ -142,8 +142,7 @@ export async function getUser(request: Request) {
       where: { id: userId },
       select: { id: true, email: true },
     });
-    if (user) return user;
-    throw notFound("User not found");
+    return user;
   } catch {
     throw logout(request);
   }
@@ -164,6 +163,7 @@ export async function requireUserId(
 
 export async function logout(request: Request) {
   const session = await getUserSession(request);
+
   return redirect("/login", {
     headers: {
       "Set-Cookie": await storage.destroySession(session),
