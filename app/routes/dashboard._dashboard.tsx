@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   createStyles,
   Navbar,
@@ -22,11 +23,11 @@ import {
   IconClipboardText,
   IconUserBolt,
 } from "@tabler/icons-react";
-import { Outlet, useLocation } from "@remix-run/react";
+import { Outlet, useLoaderData, useLocation } from "@remix-run/react";
+import type { UserRole } from "@prisma/client";
 import Logo from "~/components/landing/logo";
-import { useState } from "react";
-import user from "../../assets/user.png";
 import { dashboardLoader } from "~/components/dashboard/loaders/dashboard";
+import user from "../../assets/user.png";
 
 const useStyles = createStyles((theme) => ({
   footer: {
@@ -179,12 +180,14 @@ export default function DashboardLayout() {
   const { classes } = useStyles();
   const [opened, setOpened] = useState(false);
 
+  const { role } = useLoaderData();
+
   return (
     <AppShell
       padding="md"
       navbarOffsetBreakpoint={"sm"}
       fixed
-      navbar={<DashNavbar opened={[opened, setOpened]} />}
+      navbar={<DashNavbar opened={[opened, setOpened]} role={role} />}
       header={
         <Header height={60} px="md">
           <Group position="apart" className={classes.height100}>
@@ -216,13 +219,13 @@ export default function DashboardLayout() {
 
 const DashNavbar = ({
   opened: [opened, setOpened],
+  role,
 }: {
   opened: [boolean, (opened: boolean) => void];
+  role: UserRole;
 }) => {
   const { classes, cx } = useStyles();
   const location = useLocation();
-
-  const [role] = useState(USER_ROLES.SUPER_ADMIN);
 
   const links = data
     .filter((item) => item.roles.includes(role))

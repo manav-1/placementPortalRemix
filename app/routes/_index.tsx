@@ -6,11 +6,12 @@ import {
   Container,
   rem,
 } from "@mantine/core";
+import { useContext } from "react";
 import { Dots } from "~/components/landing/dots";
 import FeaturesCards from "~/components/landing/features";
 import Footer from "~/components/landing/footer";
 import { Navbar } from "~/components/landing/navbar";
-
+import { SnackbarContext } from "~/components/landing/snackbar";
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
@@ -105,6 +106,8 @@ const useStyles = createStyles((theme) => ({
 export default function Index() {
   const { classes } = useStyles();
 
+  const snackbarContext = useContext(SnackbarContext);
+
   return (
     <>
       <Navbar />
@@ -135,6 +138,9 @@ export default function Index() {
               size="lg"
               variant="default"
               color="gray"
+              onClick={() => {
+                snackbarContext.displayMsg("Hello wosdsfsdrld");
+              }}
             >
               Book a demo
             </Button>

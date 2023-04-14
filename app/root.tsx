@@ -17,6 +17,8 @@ import { StylesPlaceholder } from "@mantine/remix";
 import { useHotkeys, useLocalStorage } from "@mantine/hooks";
 import type { LinksFunction } from "@remix-run/node";
 import { theme } from "./theme";
+import Snackbar, { SnackbarContext } from "./components/landing/snackbar";
+import { useContext } from "react";
 
 export const meta: V2_MetaFunction = () => [
   {
@@ -44,6 +46,8 @@ export default function App() {
     getInitialValueInEffect: true,
   });
 
+  const snackbarContext = useContext(SnackbarContext);
+
   const toggleColorScheme = (value?: ColorScheme) =>
     setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
 
@@ -69,6 +73,7 @@ export default function App() {
             <ScrollRestoration />
             <Scripts />
             <LiveReload />
+            {snackbarContext.isDisplayed && <Snackbar />}
           </body>
         </html>
       </MantineProvider>

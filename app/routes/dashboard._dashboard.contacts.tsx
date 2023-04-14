@@ -1,55 +1,19 @@
+import type { V2_MetaFunction } from "@remix-run/node";
 import Contacts from "~/components/dashboard/contacts";
-
-const data = {
-  data: [
-    {
-      id: "1",
-      name: "Robert Wolfkisser",
-      position: "Engineer",
-      email: "rob_wolf@gmail.com",
-      mobile: "8745007937",
-      addedBy: "Manav",
-      company: "Google",
-    },
-    {
-      id: "2",
-      name: "Jill Jailbreaker",
-      position: "Engineer",
-      email: "jj@breaker.com",
-      mobile: "8745007937",
-      addedBy: "Manav",
-      company: "Google",
-    },
-    {
-      id: "3",
-      name: "Henry Silkeater",
-      position: "Designer",
-      email: "henry@silkeater.io",
-      mobile: "8745007937",
-      addedBy: "Manav",
-      company: "Google",
-    },
-    {
-      id: "4",
-      name: "Bill Horsefighter",
-      position: "Designer",
-      email: "bhorsefighter@gmail.com",
-      mobile: "8745007937",
-      addedBy: "Manav",
-      company: "Microsoft",
-    },
-    {
-      id: "5",
-      name: "Jeremy Footviewer",
-      position: "Manager",
-      email: "jeremy@foot.dev",
-      mobile: "8745007937",
-      addedBy: "Manav",
-      company: "Microsoft",
-    },
-  ],
-};
+import { contactsLoader } from "~/components/dashboard/loaders/contacts";
+import { ContactAction } from "~/utils/admin/actions";
 
 export default function DashboardContacts() {
-  return <Contacts data={data.data} />;
+  return <Contacts />;
 }
+
+export const meta: V2_MetaFunction = () => [
+  {
+    charset: "utf-8",
+    title: "Contacts",
+    viewport: "width=device-width,initial-scale=1",
+  },
+];
+
+export const loader = contactsLoader;
+export const action = ContactAction;

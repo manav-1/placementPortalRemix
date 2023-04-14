@@ -1,8 +1,8 @@
 import { prisma } from "prisma/prisma.server";
 import * as bcryptjs from "bcryptjs";
-import { createCookieSessionStorage, json, redirect } from "@remix-run/node";
+import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import type { LoginInput, PropertyInput, RegisterInput } from "./types.server";
-import type { Prisma, User } from "@prisma/client";
+import type { Prisma, User, UserRole } from "@prisma/client";
 import { createJWTSignedToken, verifyToken } from "../helper/helper.server";
 import createErrors from "http-errors";
 
@@ -135,12 +135,25 @@ export async function getUser(request: Request) {
   try {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { id: true, email: true },
     });
     return user;
   } catch {
     throw logout(request);
   }
+}
+
+export async function getUserPermissions(
+  request: Request,
+  roles: UserRole[] = ["ADMIN", "SUB_ADMIN", "SUPER_ADMIN", "USER"]
+) {
+  const user = await getUser(request);
+  if (!user) {
+    throw logout(request);
+  }
+  if (!roles.includes(user.role)) {
+    throw createErrors[403]("Unauthorized");
+  }
+  return user;
 }
 
 export async function requireUserId(

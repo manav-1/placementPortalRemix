@@ -1,9 +1,9 @@
 import { prisma } from "prisma/prisma.server";
-import { getUser } from "~/utils/auth/auth.server";
+import { getUserPermissions } from "~/utils/auth/auth.server";
 import { json, Response, type LoaderFunction } from "@remix-run/node";
 
 export const OpportunityLoader: LoaderFunction = async ({ request }) => {
-  const { id: userId } = await getUser(request);
+  const { id: userId } = await getUserPermissions(request);
   const userProfile = await prisma.userProfile.findUnique({
     where: {
       userId,

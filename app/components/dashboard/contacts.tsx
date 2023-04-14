@@ -22,6 +22,9 @@ import {
   IconSelector,
 } from "@tabler/icons-react";
 import { keys } from "@mantine/utils";
+import { useForm, zodResolver } from "@mantine/form";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import { ContactSchema } from "~/utils/admin/types.server";
 
 const useStyles = createStyles((theme) => ({
   rowSelected: {
@@ -57,10 +60,6 @@ const useStyles = createStyles((theme) => ({
     margin: `${theme.spacing.md}`,
   },
 }));
-
-interface TableSelectionProps {
-  data: RowData[];
-}
 
 interface ThProps {
   children: React.ReactNode;
@@ -130,7 +129,23 @@ function sortData(
   );
 }
 
-export default function Contacts({ data }: TableSelectionProps) {
+export default function Contacts() {
+  const form = useForm({
+    initialValues: {
+      name: "",
+      email: "",
+      mobile: "",
+      position: "",
+      company: "",
+    },
+    validate: zodResolver(ContactSchema),
+  });
+
+  const submit = useSubmit();
+  const actionData = useActionData();
+  console.log(actionData);
+
+  const { name, data }: { name: string; data: RowData[] } = useLoaderData();
   const { classes, cx } = useStyles();
   const [selection, setSelection] = useState<string[]>([]);
   const [search, setSearch] = useState("");
@@ -168,7 +183,7 @@ export default function Contacts({ data }: TableSelectionProps) {
     );
   };
 
-  const rows = sortedData.map((item) => {
+  const rows = sortedData.map((item: any) => {
     const selected = selection.includes(item.id);
     return (
       <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
@@ -201,6 +216,19 @@ export default function Contacts({ data }: TableSelectionProps) {
       </tr>
     );
   });
+
+  const handleContactAdd = async () => {
+    const { values } = form;
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("email", values.email);
+    formData.append("mobile", values.mobile);
+    formData.append("position", values.position);
+    formData.append("company", values.company);
+    submit(formData, {
+      method: "POST",
+    });
+  };
 
   return (
     <ScrollArea>
@@ -276,23 +304,38 @@ export default function Contacts({ data }: TableSelectionProps) {
           <tr>
             <td />
             <td>
-              <TextInput placeholder="Enter Company Name" />
+              <TextInput
+                placeholder="Enter Company Name"
+                {...form.getInputProps("company")}
+              />
             </td>
             <td>
-              <TextInput placeholder="Enter Name" />
+              <TextInput
+                placeholder="Enter Name"
+                {...form.getInputProps("name")}
+              />
             </td>
             <td>
-              <TextInput placeholder="Enter email" />
+              <TextInput
+                placeholder="Enter email"
+                {...form.getInputProps("email")}
+              />
             </td>
             <td>
-              <TextInput placeholder="Enter mobile" />
+              <TextInput
+                placeholder="Enter mobile"
+                {...form.getInputProps("mobile")}
+              />
             </td>
             <td>
-              <TextInput placeholder="Enter position" />
+              <TextInput
+                placeholder="Enter position"
+                {...form.getInputProps("position")}
+              />
             </td>
-            <td>Manav Arora</td>
+            <td>{name}</td>
             <td>
-              <Button>
+              <Button onClick={handleContactAdd}>
                 <IconAddressBook /> Add
               </Button>
             </td>

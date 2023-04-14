@@ -3,24 +3,14 @@ import {
   Grid,
   Group,
   Menu,
-  Select,
   Space,
   Title,
   UnstyledButton,
   createStyles,
   rem,
 } from "@mantine/core";
-import type { V2_MetaFunction } from "@remix-run/node";
 import { IconChevronDown } from "@tabler/icons-react";
 import { useState } from "react";
-
-export const meta: V2_MetaFunction = () => [
-  {
-    charset: "utf-8",
-    title: "Admin Dashboard",
-    viewport: "width=device-width,initial-scale=1",
-  },
-];
 
 const useStyles = createStyles((theme, { opened }: { opened: boolean }) => ({
   control: {

@@ -1,4 +1,4 @@
-import type { LoaderFunction } from "@remix-run/node";
+import type { LoaderFunction, V2_MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import Login from "~/components/auth/login";
 import { LoginAction } from "~/utils/auth/actions";
@@ -13,3 +13,11 @@ export const loader: LoaderFunction = async ({ request }) => {
   return (await getUser(request)) ? redirect("/dashboard/opportunities") : null;
 };
 export const action = LoginAction;
+
+export const meta: V2_MetaFunction = () => [
+  {
+    charset: "utf-8",
+    title: " Login | Workhub",
+    viewport: "width=device-width,initial-scale=1",
+  },
+];

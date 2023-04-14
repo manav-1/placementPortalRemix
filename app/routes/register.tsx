@@ -1,4 +1,8 @@
-import { type LoaderFunction, redirect } from "@remix-run/node";
+import {
+  type LoaderFunction,
+  redirect,
+  type V2_MetaFunction,
+} from "@remix-run/node";
 import Signup from "~/components/auth/register";
 import { RegisterAction } from "~/utils/auth/actions";
 import { getUser } from "~/utils/auth/auth.server";
@@ -13,3 +17,11 @@ export const loader: LoaderFunction = async ({ request }) => {
 };
 
 export const action = RegisterAction;
+
+export const meta: V2_MetaFunction = () => [
+  {
+    charset: "utf-8",
+    title: "Register | Workhub",
+    viewport: "width=device-width,initial-scale=1",
+  },
+];
