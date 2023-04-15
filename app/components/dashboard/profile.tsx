@@ -21,6 +21,8 @@ import { useRef, useState } from "react";
 import { Text, createStyles, rem } from "@mantine/core";
 import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
 import { IconCloudUpload, IconX, IconDownload } from "@tabler/icons-react";
+import { useLoaderData } from "@remix-run/react";
+import type { Stream, UserProfile } from "@prisma/client";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -58,7 +60,7 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
-export function DropzoneButton({ formProps }: { formProps: any }) {
+export function DropzoneButton({ resumeProps, resumeFileProps, form }: any) {
   const { classes, theme } = useStyles();
   const openRef = useRef<() => void>(null);
 
@@ -68,18 +70,26 @@ export function DropzoneButton({ formProps }: { formProps: any }) {
         label="Resume"
         placeholder="Resume URL"
         mt="md"
-        name="subject"
+        name="resume"
+        readOnly
         variant="filled"
-        {...formProps}
+        {...resumeProps}
       />
       <Dropzone
         openRef={openRef}
-        onDrop={() => {}}
+        onDrop={(files) => {
+          const [resumeFile] = files;
+          form.setFieldValue("resume", resumeFile.name);
+
+          // form.setFieldValue("resumeFile", resumeFile);
+        }}
+        name="resumeFile"
         className={classes.dropzone}
         radius="md"
         mt="md"
         accept={[MIME_TYPES.pdf]}
         maxSize={5 * 1024 ** 2}
+        {...resumeFileProps}
       >
         <div style={{ pointerEvents: "none" }}>
           <Group position="center">
@@ -173,12 +183,10 @@ export function TypeInput() {
 export function LinkInput({
   placeholder,
   label,
-  formInputProps,
   onPress,
 }: {
   placeholder: string;
   label: string;
-  formInputProps: any;
   onPress: any;
 }) {
   const { classes } = useStyles();
@@ -193,7 +201,6 @@ export function LinkInput({
         variant="filled"
         rightSection={<TypeInput />}
         rightSectionWidth={92}
-        {...formInputProps}
       />
 
       <Button onClick={onPress}>
@@ -204,16 +211,21 @@ export function LinkInput({
 }
 
 export default function Profile() {
+  const { userProfile, streams } = useLoaderData<{
+    userProfile: UserProfile;
+    streams: Stream[];
+  }>();
   const form = useForm({
     initialValues: {
-      firstName: "",
-      lastName: "",
-      streamId: "",
-      marks10: "",
-      marks12: "",
-      marksGrad: "",
-      marksPost: "",
-      resumeURL: "",
+      firstName: userProfile?.firstName,
+      lastName: userProfile?.lastName,
+      streamId: userProfile?.streamId,
+      marks10: userProfile?.marks10,
+      marks12: userProfile?.marks12,
+      marksGrad: userProfile?.marksGrad,
+      marksPost: userProfile?.marksPost,
+      resume: userProfile?.resume,
+      resumeFile: null,
     },
     validate: {},
   });
@@ -221,14 +233,21 @@ export default function Profile() {
   return (
     <Grid>
       <Grid.Col lg={10} xl={5} md={12} sm={12}>
-        <form onSubmit={form.onSubmit(() => {})}>
+        <form
+          method="POST"
+          // onSubmit={(e) => {
+          //   e.preventDefault();
+          //   const elements = e.currentTarget.elements;
+          //   console.log(elements);
+          // }}
+        >
           <Title order={2} size="h1" mb="md" weight={900}>
             Your Profile
           </Title>
           <TextInput
             label="First Name"
             placeholder="First Name"
-            name="position"
+            name="firstName"
             mt="md"
             variant="filled"
             {...form.getInputProps("firstName")}
@@ -236,7 +255,7 @@ export default function Profile() {
           <TextInput
             label="Last Name"
             placeholder="Last Name"
-            name="position"
+            name="lastName"
             mt="md"
             variant="filled"
             {...form.getInputProps("lastName")}
@@ -245,7 +264,11 @@ export default function Profile() {
           <Select
             mt="md"
             withinPortal
-            data={["React", "Angular", "Svelte", "Vue"]}
+            data={streams.map((stream) => ({
+              label: stream.name,
+              value: stream.id,
+            }))}
+            name="streamId"
             placeholder="Pick your stream"
             label="Stream"
             variant="filled"
@@ -255,7 +278,7 @@ export default function Profile() {
           <TextInput
             label="10th Marks"
             placeholder="10th Marks"
-            name="url"
+            name="marks10"
             mt="md"
             variant="filled"
             {...form.getInputProps("marks10")}
@@ -263,7 +286,7 @@ export default function Profile() {
           <TextInput
             label="12th Marks"
             placeholder="12th Marks"
-            name="url"
+            name="marks12"
             mt="md"
             variant="filled"
             {...form.getInputProps("marks12")}
@@ -271,7 +294,7 @@ export default function Profile() {
           <TextInput
             label="Marks in Graduation/ CGPA"
             placeholder="Marks/ CGPA"
-            name="url"
+            name="marksGrad"
             mt="md"
             variant="filled"
             {...form.getInputProps("marksGrad")}
@@ -279,7 +302,7 @@ export default function Profile() {
           <TextInput
             label="Marks in Post Graduation"
             placeholder="Marks in Post Graduation"
-            name="url"
+            name="marksPost"
             mt="md"
             variant="filled"
             {...form.getInputProps("marksPost")}
@@ -287,17 +310,19 @@ export default function Profile() {
           <LinkInput
             placeholder="Enter the url"
             label="Project Links"
-            formInputProps={form.getInputProps("projects")}
             onPress={() => {}}
           />
           <LinkInput
             placeholder="Enter the url"
             label="Portfolio Links"
-            formInputProps={form.getInputProps("portfolio")}
             onPress={() => {}}
           />
 
-          <DropzoneButton formProps={form.getInputProps("resume")} />
+          <DropzoneButton
+            resumeProps={form.getInputProps("resume")}
+            resumeFileProps={form.getInputProps("resumeFile")}
+            form={form}
+          />
 
           <Tooltip label="Save Profile">
             <Button type="submit" mt="md" size="md">

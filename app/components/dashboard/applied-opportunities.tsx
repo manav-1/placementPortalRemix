@@ -13,7 +13,7 @@ import {
   Grid,
   Title,
 } from "@mantine/core";
-import { Link } from "@remix-run/react";
+import { Link, useLoaderData } from "@remix-run/react";
 import type { Key } from "react";
 
 const useStyles = createStyles((theme) => ({
@@ -153,6 +153,8 @@ export function OpportunityCard({
 }
 
 export default function Opportunities() {
+  const { appliedOpportunities } = useLoaderData();
+
   return (
     <Grid>
       <Grid.Col span={12}>
