@@ -1,31 +1,75 @@
-import type { ActionFunction } from "@remix-run/server-runtime";
-import { uploadFile } from "../supabase/client.server";
+import { redirect, type ActionFunction } from "@remix-run/node";
+import { getUserPermissions } from "../auth/auth.server";
+import {
+  PortfolioSchema,
+  ProjectSchema,
+  UserProfileSchema,
+} from "./types.server";
+import { addPortfolio, addProject, createUserProfile } from "./user.server";
+import type { LinkType } from "@prisma/client";
 
 export const ProfileAction: ActionFunction = async ({ request }) => {
+  const { id: userId } = await getUserPermissions(request);
+
   const form = await request.formData();
 
-  const firstName = form.get("firstName");
-  const lastName = form.get("lastName");
-  const stream = form.get("streamId");
-  const marks10 = form.get("marks10");
-  const marks12 = form.get("marks12");
-  const marksGrad = form.get("marksGrad");
-  const marksPost = form.get("marksPost");
-  const resume = form.get("resume");
-  const resumeFile = form.get("resumeFile");
-  console.log(
+  const firstName = form.get("firstName") as string;
+  const lastName = form.get("lastName") as string;
+  const streamId = form.get("streamId") as string;
+  const marks10 = Number(form.get("marks10"));
+  const marks12 = Number(form.get("marks12"));
+  const marksGrad = Number(form.get("marksGrad"));
+  const marksPost = Number(form.get("marksPost"));
+  const resume = form.get("resume") as string;
+
+  const userProfile = {
     firstName,
     lastName,
-    stream,
+    streamId,
     marks10,
     marks12,
     marksGrad,
     marksPost,
     resume,
-    resumeFile,
-    "ResumeFile"
-  );
+    userId,
+  };
+  UserProfileSchema.parse(userProfile);
+  const data = await createUserProfile(userProfile);
 
-  await uploadFile(resumeFile);
-  return null;
+  return data;
+};
+
+export const AddProjects: ActionFunction = async ({ request }) => {
+  const { id: userId } = await getUserPermissions(request);
+  const formData = await request.formData();
+  const projectURL = formData.get("projectURL") as string;
+  const projectType = formData.get("projectType") as LinkType;
+  const projectName = formData.get("projectName") as string;
+
+  const project = {
+    userId,
+    projectURL,
+    projectType,
+    projectName,
+  };
+  ProjectSchema.parse(project);
+  await addProject(project);
+
+  return redirect("/dashboard/profile");
+};
+
+export const AddPortfolio: ActionFunction = async ({ request }) => {
+  const { id: userId } = await getUserPermissions(request);
+  const formData = await request.formData();
+  const portfolioURL = formData.get("portfolioURL") as string;
+  const portfolioType = formData.get("portfolioType") as LinkType;
+
+  console.log(portfolioURL, portfolioType);
+  console.log(Object.entries(formData));
+
+  const portfolio = { userId, portfolioURL, portfolioType };
+  PortfolioSchema.parse(portfolio);
+  await addPortfolio(portfolio);
+
+  return redirect("/dashboard/profile");
 };

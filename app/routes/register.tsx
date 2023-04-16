@@ -4,7 +4,7 @@ import {
   type V2_MetaFunction,
 } from "@remix-run/node";
 import Signup from "~/components/auth/register";
-import { RegisterAction } from "~/utils/auth/actions";
+import { RegisterAction } from "~/utils/auth/actions.server";
 import { getUser } from "~/utils/auth/auth.server";
 
 export default function Index() {

@@ -19,39 +19,48 @@ model User {
   isActive            Boolean               @default(true)
   isEmailVerified     Boolean               @default(false)
   userProfile         UserProfile?
-  OpportunityUserLink OpportunityUserLink[]
-  HRContact           HRContact[]
+  opportunityUserLink OpportunityUserLink[]
+  hrContact           HRContact[]
 }
 
 model UserProfile {
-  id         String    @id @default(uuid())
-  user       User      @relation(fields: [userId], references: [id])
-  userId     String    @unique
-  firstName  String?
-  lastName   String?
-  Stream     Stream?   @relation(fields: [streamId], references: [id])
-  streamId   String?
-  marks10    Int?
-  marks12    Int?
-  marksGrad  Int?
-  marksPost  Int?
-  resumeName String?
-  resume     String?
-  createdAt  DateTime  @default(now())
-  updatedAt  DateTime  @updatedAt
-  Project    Project[]
-  Links      Links[]
+  id        String      @id @default(uuid())
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @unique
+  firstName String?
+  lastName  String?
+  stream    Stream?     @relation(fields: [streamId], references: [id])
+  streamId  String?
+  marks10   Int?
+  marks12   Int?
+  marksGrad Int?
+  marksPost Int?
+  resume    String?
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  projects  Project[]
+  links     Portfolio[]
 }
 
 model Project {
-  id            String      @id @default(uuid())
-  name          String
-  description   String
-  url           String
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  userProfile   UserProfile @relation(fields: [userProfileId], references: [id])
-  userProfileId String
+  id          String      @id @default(uuid())
+  name        String
+  url         String
+  type        LinkType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdBy   UserProfile @relation(fields: [createdById], references: [id])
+  createdById String
+}
+
+model Portfolio {
+  id          String      @id @default(uuid())
+  url         String
+  type        LinkType
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  createdBy   UserProfile @relation(fields: [createdById], references: [id])
+  createdById String
 }
 
 model Opportunity {
@@ -67,8 +76,8 @@ model Opportunity {
   isActive              Boolean                 @default(true)
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
-  OpportunityStreamLink OpportunityStreamLink[]
-  OpportunityUserLink   OpportunityUserLink[]
+  opportunityStreamLink OpportunityStreamLink[]
+  opportunityUserLink   OpportunityUserLink[]
 }
 
 model OpportunityStreamLink {
@@ -97,7 +106,7 @@ model Stream {
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   userProfile           UserProfile[]
-  OpportunityStreamLink OpportunityStreamLink[]
+  opportunityStreamLink OpportunityStreamLink[]
 }
 
 model HRContact {
@@ -111,17 +120,6 @@ model HRContact {
   company   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-model Links {
-  id          String      @id @default(uuid())
-  name        String
-  url         String
-  type        LinkType
-  createdBy   UserProfile @relation(fields: [createdById], references: [id])
-  createdById String
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
 }
 
 model EmailTemplates {

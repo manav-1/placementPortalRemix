@@ -9,5 +9,25 @@ export const ProfileLoader: LoaderFunction = async ({ request }) => {
   });
 
   const streams = await prisma.stream.findMany({});
-  return json({ userProfile, streams });
+
+  const projects = await prisma.project.findMany({
+    where: {
+      createdBy: {
+        user: {
+          id: userId,
+        },
+      },
+    },
+  });
+  const portfolios = await prisma.portfolio.findMany({
+    where: {
+      createdBy: {
+        user: {
+          id: userId,
+        },
+      },
+    },
+  });
+
+  return json({ userProfile, streams, projects, portfolios });
 };

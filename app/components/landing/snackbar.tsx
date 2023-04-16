@@ -7,8 +7,9 @@ const useStyles = createStyles((theme) => ({
     bottom: 10,
     left: 10,
     right: 10,
-    backgroundColor: theme.colorScheme === "dark" ? theme.black : theme.white,
-    color: theme.colorScheme === "dark" ? theme.white : theme.black,
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.black : theme.colors.blue,
+    color: theme.black,
     padding: theme.spacing.md,
     display: "flex",
     alignItems: "center",

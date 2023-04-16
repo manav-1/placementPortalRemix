@@ -31,7 +31,7 @@ export const OpportunityLoader: LoaderFunction = async ({ request }) => {
   return json({
     opportunities: await prisma.opportunity.findMany({
       where: {
-        OpportunityStreamLink: {
+        opportunityStreamLink: {
           every: {
             streamId: userProfile.streamId,
           },

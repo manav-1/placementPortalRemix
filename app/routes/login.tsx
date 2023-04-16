@@ -1,7 +1,7 @@
 import type { LoaderFunction, V2_MetaFunction } from "@remix-run/node";
 import { redirect } from "@remix-run/node";
 import Login from "~/components/auth/login";
-import { LoginAction } from "~/utils/auth/actions";
+import { LoginAction } from "~/utils/auth/actions.server";
 import { getUser } from "~/utils/auth/auth.server";
 
 export default function Index() {
