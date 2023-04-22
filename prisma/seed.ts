@@ -19,6 +19,7 @@ async function seed() {
       mobile: "8745007937",
     },
   });
+  await prisma.stream.deleteMany({});
   await prisma.stream.createMany({
     data: [
       {
