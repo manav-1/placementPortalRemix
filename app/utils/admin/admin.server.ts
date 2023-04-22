@@ -3,7 +3,8 @@ import type { AddOpportunityType, ContactType } from "./types";
 import { json } from "@remix-run/node";
 
 export const createContact = async (contactData: ContactType) => {
-  return prisma.hRContact.create({ data: contactData });
+  const contact = await prisma.hRContact.create({ data: contactData });
+  return contact;
 };
 
 export const createOpportunity = async (

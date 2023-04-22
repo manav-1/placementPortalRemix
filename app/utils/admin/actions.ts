@@ -1,36 +1,46 @@
 import { type ActionFunction } from "@remix-run/node";
 import { getUserPermissions } from "../auth/auth.server";
-import {
-  AddOpportunitySchema,
-  AddOpportunityType,
-  ContactSchema,
-} from "./types";
+import { AddOpportunitySchema, ContactSchema } from "./types";
 import { createContact, createOpportunity } from "./admin.server";
-import { OpportunityType, UserRole } from "@prisma/client";
+import type { OpportunityType } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 
 export const ContactAction: ActionFunction = async ({ request }) => {
-  const { id } = await getUserPermissions(request, ["ADMIN", "SUB_ADMIN"]);
-  const form = await request.formData();
+  try {
+    const { id } = await getUserPermissions(request, [
+      UserRole.SUPER_ADMIN,
+      UserRole.ADMIN,
+      UserRole.SUB_ADMIN,
+    ]);
+    const form = await request.formData();
 
-  const name = form.get("name") as string;
-  const email = form.get("email") as string;
-  const mobile = form.get("mobile") as string;
-  const position = form.get("position") as string;
-  const company = form.get("company") as string;
-  const contactData = {
-    name,
-    email,
-    mobile,
-    position,
-    company,
-    addedById: id,
-  };
+    const name = form.get("name") as string;
+    const email = form.get("email") as string;
+    const mobile = form.get("mobile") as string;
+    const position = form.get("position") as string;
+    const company = form.get("company") as string;
+    const contactData = {
+      name,
+      email,
+      mobile,
+      position,
+      company,
+      addedById: id,
+    };
 
-  console.log(contactData);
-
-  ContactSchema.parse(contactData);
-  const contact = await createContact(contactData);
-  return contact;
+    ContactSchema.parse(contactData);
+    const contact = await createContact(contactData);
+    return contact;
+    // return { contact };
+  } catch (e: any) {
+    if (e.code === "P2002")
+      throw new Response("Contact already exists", {
+        status: 409,
+      });
+    throw new Response("Something went wrong", {
+      status: 500,
+    });
+  }
 };
 
 export const AddOpportunityAction: ActionFunction = async ({ request }) => {

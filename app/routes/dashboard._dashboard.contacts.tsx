@@ -1,6 +1,8 @@
 import type { V2_MetaFunction } from "@remix-run/node";
+import { useRouteError } from "@remix-run/react";
 import Contacts from "~/components/dashboard/contacts";
 import { contactsLoader } from "~/components/dashboard/loaders/contacts";
+import { ErrorPage } from "~/components/error";
 import { ContactAction } from "~/utils/admin/actions";
 
 export default function DashboardContacts() {
@@ -17,3 +19,9 @@ export const meta: V2_MetaFunction = () => [
 
 export const loader = contactsLoader;
 export const action = ContactAction;
+
+export function ErrorBoundary() {
+  console.log(useRouteError());
+  const { status, statusText, data } = useRouteError() as any;
+  return <ErrorPage statusCode={status} message={statusText} name={data} />;
+}

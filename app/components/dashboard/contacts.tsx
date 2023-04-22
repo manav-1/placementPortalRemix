@@ -10,20 +10,25 @@ import {
   Button,
   Title,
   UnstyledButton,
-  Center,
   TextInput,
+  Flex,
+  Tooltip,
+  Pagination,
 } from "@mantine/core";
 import {
   IconAddressBook,
   IconBrandTelegram,
-  IconChevronDown,
-  IconChevronUp,
   IconSearch,
-  IconSelector,
+  IconTrash,
 } from "@tabler/icons-react";
-import { keys } from "@mantine/utils";
 import { useForm, zodResolver } from "@mantine/form";
-import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
+import {
+  useActionData,
+  useLoaderData,
+  useLocation,
+  useNavigate,
+  useSubmit,
+} from "@remix-run/react";
 import { ContactSchema } from "~/utils/admin/types";
 
 const useStyles = createStyles((theme) => ({
@@ -63,9 +68,6 @@ const useStyles = createStyles((theme) => ({
 
 interface ThProps {
   children: React.ReactNode;
-  reversed: boolean;
-  sorted: boolean;
-  onSort(): void;
 }
 interface RowData {
   id: string;
@@ -77,81 +79,49 @@ interface RowData {
   company: string;
 }
 
-function Th({ children, reversed, sorted, onSort }: ThProps) {
+function Th({ children }: ThProps) {
   const { classes } = useStyles();
-  const Icon = sorted
-    ? reversed
-      ? IconChevronUp
-      : IconChevronDown
-    : IconSelector;
   return (
     <th className={classes.th}>
-      <UnstyledButton onClick={onSort} className={classes.control}>
+      <UnstyledButton className={classes.control}>
         <Group position="apart">
           <Text fw={500} fz="sm">
             {children}
           </Text>
-          <Center className={classes.icon}>
-            <Icon size="0.9rem" stroke={1.5} />
-          </Center>
         </Group>
       </UnstyledButton>
     </th>
   );
 }
 
-function filterData(data: RowData[], search: string) {
-  const query = search.toLowerCase().trim();
-  return data.filter((item) =>
-    keys(data[0]).some((key) => item[key].toLowerCase().includes(query))
-  );
-}
-
-function sortData(
-  data: RowData[],
-  payload: { sortBy: keyof RowData | null; reversed: boolean; search: string }
-) {
-  const { sortBy } = payload;
-
-  if (!sortBy) {
-    return filterData(data, payload.search);
-  }
-
-  return filterData(
-    [...data].sort((a, b) => {
-      if (payload.reversed) {
-        return b[sortBy].localeCompare(a[sortBy]);
-      }
-
-      return a[sortBy].localeCompare(b[sortBy]);
-    }),
-    payload.search
-  );
-}
-
 export default function Contacts() {
-  const form = useForm({
-    initialValues: {
-      name: "",
-      email: "",
-      mobile: "",
-      position: "",
-      company: "",
-    },
-    validate: zodResolver(ContactSchema),
-  });
-
   const submit = useSubmit();
-  const actionData = useActionData();
-  console.log(actionData);
+  const navigate = useNavigate();
 
-  const { name, data }: { name: string; data: RowData[] } = useLoaderData();
+  const { id, name, contacts, pagination } = useLoaderData<{
+    id: string;
+    name: string;
+    contacts: RowData[];
+    pagination: {
+      page: number;
+      totalPages: number;
+    };
+  }>();
+  const [currentPage, setCurrentPage] = useState(pagination.page);
+
+  const location = useLocation();
+
+  const handlePageChange = (newPage: number) => {
+    setCurrentPage(newPage);
+    navigate(`${location.pathname}?page=${newPage}&search=${search}`);
+  };
+
+  const actionData = useActionData();
+  if (actionData?.contact) contacts.push(actionData.contact);
+
   const { classes, cx } = useStyles();
   const [selection, setSelection] = useState<string[]>([]);
   const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState(data);
-  const [sortBy, setSortBy] = useState<keyof RowData | null>(null);
-  const [reverseSortDirection, setReverseSortDirection] = useState(false);
 
   const toggleRow = (id: string) =>
     setSelection((current) =>
@@ -161,29 +131,16 @@ export default function Contacts() {
     );
   const toggleAll = () =>
     setSelection((current) =>
-      current.length === data.length ? [] : data.map((item) => item.id)
+      current.length === contacts.length ? [] : contacts.map((item) => item.id)
     );
-
-  const setSorting = (field: keyof RowData) => {
-    const reversed = field === sortBy ? !reverseSortDirection : false;
-    setReverseSortDirection(reversed);
-    setSortBy(field);
-    setSortedData(sortData(data, { sortBy: field, reversed, search }));
-  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.currentTarget;
     setSearch(value);
-    setSortedData(
-      sortData(data, {
-        sortBy,
-        reversed: reverseSortDirection,
-        search: value,
-      })
-    );
+    navigate(`${location.pathname}?search=${value}`);
   };
 
-  const rows = sortedData.map((item: any) => {
+  const rows = contacts.map((item: any) => {
     const selected = selection.includes(item.id);
     return (
       <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
@@ -208,26 +165,49 @@ export default function Contacts() {
         <td>{item.addedBy}</td>
 
         <td>
-          <Button>
-            <IconBrandTelegram size={18} />
-            Send mail
-          </Button>
+          <Flex>
+            <Button variant="subtle" mr={"sm"}>
+              <Tooltip label="Send Mail">
+                <IconBrandTelegram size={18} />
+              </Tooltip>
+            </Button>
+            <Button variant="subtle">
+              <Tooltip label="Delete Contact">
+                <IconTrash size={18} />
+              </Tooltip>
+            </Button>
+          </Flex>
         </td>
       </tr>
     );
   });
 
+  const contactForm = useForm({
+    initialValues: {
+      name: "name",
+      email: "email@gmail.com",
+      mobile: "",
+      position: "position",
+      company: "company",
+      addedById: id,
+    },
+    validate: zodResolver(ContactSchema),
+  });
+
   const handleContactAdd = async () => {
-    const { values } = form;
-    const formData = new FormData();
-    formData.append("name", values.name);
-    formData.append("email", values.email);
-    formData.append("mobile", values.mobile);
-    formData.append("position", values.position);
-    formData.append("company", values.company);
-    submit(formData, {
-      method: "POST",
-    });
+    const { values } = contactForm;
+    contactForm.validate();
+    if (contactForm.isValid()) {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("email", values.email);
+      formData.append("mobile", values.mobile);
+      formData.append("position", values.position);
+      formData.append("company", values.company);
+      submit(formData, {
+        method: "POST",
+      });
+    }
   };
 
   return (
@@ -248,55 +228,19 @@ export default function Contacts() {
             <th style={{ width: rem(40) }}>
               <Checkbox
                 onChange={toggleAll}
-                checked={selection.length === data.length}
+                checked={selection.length === contacts.length}
                 indeterminate={
-                  selection.length > 0 && selection.length !== data.length
+                  selection.length > 0 && selection.length !== contacts.length
                 }
                 transitionDuration={0}
               />
             </th>
-            <Th
-              sorted={sortBy === "company"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("company")}
-            >
-              Company
-            </Th>
-            <Th
-              sorted={sortBy === "name"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("name")}
-            >
-              Name
-            </Th>
-            <Th
-              sorted={sortBy === "email"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("email")}
-            >
-              Email
-            </Th>
-            <Th
-              sorted={sortBy === "mobile"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("mobile")}
-            >
-              Mobile
-            </Th>
-            <Th
-              sorted={sortBy === "position"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("position")}
-            >
-              Position
-            </Th>
-            <Th
-              sorted={sortBy === "addedBy"}
-              reversed={reverseSortDirection}
-              onSort={() => setSorting("addedBy")}
-            >
-              Added By User
-            </Th>
+            <Th>Company</Th>
+            <Th>Name</Th>
+            <Th>Email</Th>
+            <Th>Mobile</Th>
+            <Th>Position</Th>
+            <Th>Added By User</Th>
             <th>Action</th>
           </tr>
         </thead>
@@ -306,31 +250,31 @@ export default function Contacts() {
             <td>
               <TextInput
                 placeholder="Enter Company Name"
-                {...form.getInputProps("company")}
+                {...contactForm.getInputProps("company")}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter Name"
-                {...form.getInputProps("name")}
+                {...contactForm.getInputProps("name")}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter email"
-                {...form.getInputProps("email")}
+                {...contactForm.getInputProps("email")}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter mobile"
-                {...form.getInputProps("mobile")}
+                {...contactForm.getInputProps("mobile")}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter position"
-                {...form.getInputProps("position")}
+                {...contactForm.getInputProps("position")}
               />
             </td>
             <td>{name}</td>
@@ -343,6 +287,13 @@ export default function Contacts() {
           {rows}
         </tbody>
       </Table>
+      <Pagination
+        variant="outline"
+        color="gray"
+        value={currentPage}
+        total={pagination.totalPages}
+        onChange={handlePageChange}
+      />
     </ScrollArea>
   );
 }

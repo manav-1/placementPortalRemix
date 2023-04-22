@@ -2,12 +2,12 @@ import { OpportunityType } from "@prisma/client";
 import { z } from "zod";
 
 export const ContactSchema = z.object({
-  name: z.string(),
+  name: z.string().nonempty({ message: "HR Name is required" }),
   email: z.string().email(),
   mobile: z.string().optional(),
-  position: z.string(),
-  company: z.string(),
-  addedById: z.string(),
+  company: z.string().nonempty({ message: "Company name is required" }),
+  position: z.string().nonempty({ message: "Position is required" }),
+  addedById: z.string().nonempty({ message: "Added by is required" }),
 });
 
 export const AddOpportunitySchema = z.object({
