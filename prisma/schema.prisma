@@ -26,7 +26,7 @@ model User {
 
 model UserProfile {
   id        String      @id @default(uuid())
-  user      User        @relation(fields: [userId], references: [id])
+  user      User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId    String      @unique
   firstName String?
   lastName  String?
@@ -50,7 +50,7 @@ model Project {
   type        LinkType
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  createdBy   UserProfile @relation(fields: [createdById], references: [id])
+  createdBy   UserProfile @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
 }
 
@@ -60,7 +60,7 @@ model Portfolio {
   type        LinkType
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
-  createdBy   UserProfile @relation(fields: [createdById], references: [id])
+  createdBy   UserProfile @relation(fields: [createdById], references: [id], onDelete: Cascade)
   createdById String
 }
 
@@ -96,9 +96,9 @@ model OpportunityStreamLink {
 
 model OpportunityUserLink {
   id            String      @id @default(uuid())
-  opportunity   Opportunity @relation(fields: [opportunityId], references: [id])
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
   opportunityId String
-  user          User        @relation(fields: [userId], references: [id])
+  user          User        @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId        String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
@@ -119,8 +119,8 @@ model HRContact {
   email     String   @unique
   mobile    String?
   position  String?
-  addedBy   User     @relation(fields: [addedById], references: [id])
-  addedById String
+  addedBy   User?    @relation(fields: [addedById], references: [id], onDelete: SetNull)
+  addedById String?
   company   String
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
