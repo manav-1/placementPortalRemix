@@ -1,5 +1,5 @@
 import { prisma } from "prisma/prisma.server";
-import type { UserProfile } from "./types.server";
+import type { UserProfile } from "./types";
 import type { LinkType, Prisma } from "@prisma/client";
 
 export const createUserProfile = async (userProfile: UserProfile) => {
@@ -66,4 +66,18 @@ export const addPortfolio = async ({
     data,
   });
   return portfolioData;
+};
+
+export const deleteProject = async (projectId: string | undefined) => {
+  const data = await prisma.project.delete({
+    where: { id: projectId },
+  });
+  return data;
+};
+
+export const deletePortfolio = async (portfolioId: string | undefined) => {
+  const data = await prisma.portfolio.delete({
+    where: { id: portfolioId },
+  });
+  return data;
 };

@@ -16,7 +16,8 @@ import {
 } from "@mantine/core";
 import { Link, useLoaderData } from "@remix-run/react";
 import companyPlaceholder from "../../../assets/company-placeholder.png";
-import type { Key } from "react";
+import type { Opportunity } from "@prisma/client";
+import { DateTime } from "luxon";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -179,24 +180,22 @@ export default function Opportunities() {
           Opportunities
         </Title>
       </Grid.Col>
-      {Array.from(Array(10).keys()).map(
-        (item: any, index: Key | null | undefined) => (
-          <OpportunityCard
-            key={index}
-            name="Placement Opportunity"
-            deadline="12/12/2021"
-            linkedin="https://www.linkedin.com/in/abc"
-            url="https://www.abc.com"
-            type="Placement"
-            companyImage={
-              Math.random() > 0.5 ? "https://picsum.photos/200/300" : undefined
-            }
-            companyName="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc ut aliquam aliquam, nunc nisl aliquet nisl, eget aliquam nisl nisl sit amet lorem. Sed euismod, nunc ut aliquam aliquam, nunc nisl aliquet nisl, eget aliquam nisl nisl sit amet lorem."
-            jd="https://google.com"
-          />
-        )
-      )}
+      {opportunities.map((item: Opportunity) => (
+        <OpportunityCard
+          key={item.id}
+          name={item.name}
+          deadline={DateTime.fromJSDate(new Date(item.deadline)).toFormat(
+            "dd LLL yyyy"
+          )}
+          linkedin={item.linkedin}
+          url={item.url}
+          type={item.type}
+          companyImage={item.companyImage || undefined}
+          companyName={item.company}
+          description={item.description}
+          jd={item.jobDesc}
+        />
+      ))}
     </Grid>
   );
 }

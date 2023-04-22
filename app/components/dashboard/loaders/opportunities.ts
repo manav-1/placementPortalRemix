@@ -27,16 +27,16 @@ export const OpportunityLoader: LoaderFunction = async ({ request }) => {
       statusText:
         "No stream found for this user, Please visit profile section to update profile and see opportunitites",
     });
-
-  return json({
-    opportunities: await prisma.opportunity.findMany({
-      where: {
-        opportunityStreamLink: {
-          every: {
-            streamId: userProfile.streamId,
-          },
+  const opportunities = await prisma.opportunity.findMany({
+    where: {
+      opportunityStreamLink: {
+        every: {
+          streamId: userProfile.streamId,
         },
       },
-    }),
+    },
+  });
+  return json({
+    opportunities,
   });
 };

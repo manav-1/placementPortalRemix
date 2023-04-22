@@ -21,6 +21,7 @@ model User {
   userProfile         UserProfile?
   opportunityUserLink OpportunityUserLink[]
   hrContact           HRContact[]
+  Opportunity         Opportunity[]
 }
 
 model UserProfile {
@@ -68,12 +69,15 @@ model Opportunity {
   name                  String
   description           String
   url                   String
-  companyImage          String
+  company               String
+  companyImage          String?
   linkedin              String
   jobDesc               String
   deadline              DateTime
   type                  OpportunityType
   isActive              Boolean                 @default(true)
+  addedById             String
+  addedBy               User                    @relation(fields: [addedById], references: [id])
   createdAt             DateTime                @default(now())
   updatedAt             DateTime                @updatedAt
   opportunityStreamLink OpportunityStreamLink[]

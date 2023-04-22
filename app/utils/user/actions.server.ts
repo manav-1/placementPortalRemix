@@ -1,12 +1,15 @@
 import { redirect, type ActionFunction } from "@remix-run/node";
 import { getUserPermissions } from "../auth/auth.server";
+import { PortfolioSchema, ProjectSchema, UserProfileSchema } from "./types";
 import {
-  PortfolioSchema,
-  ProjectSchema,
-  UserProfileSchema,
-} from "./types.server";
-import { addPortfolio, addProject, createUserProfile } from "./user.server";
+  addPortfolio,
+  addProject,
+  createUserProfile,
+  deletePortfolio,
+  deleteProject,
+} from "./user.server";
 import type { LinkType } from "@prisma/client";
+import { prisma } from "prisma/prisma.server";
 
 export const ProfileAction: ActionFunction = async ({ request }) => {
   const { id: userId } = await getUserPermissions(request);
@@ -72,4 +75,28 @@ export const AddPortfolio: ActionFunction = async ({ request }) => {
   await addPortfolio(portfolio);
 
   return redirect("/dashboard/profile");
+};
+
+export const DeletePortfolio: ActionFunction = async ({ request, params }) => {
+  try {
+    await getUserPermissions(request);
+    const { id: portfolioId } = params;
+    await deletePortfolio(portfolioId);
+    return redirect("/dashboard/profile");
+  } catch (e) {
+    console.log(e);
+    return redirect("/dashboard/profile");
+  }
+};
+
+export const DeleteProject: ActionFunction = async ({ request, params }) => {
+  try {
+    await getUserPermissions(request);
+    const { id: projectId } = params;
+    await deleteProject(projectId);
+    return redirect("/dashboard/profile");
+  } catch (e) {
+    console.log(e);
+    return redirect("/dashboard/profile");
+  }
 };

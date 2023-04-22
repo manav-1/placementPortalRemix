@@ -24,7 +24,7 @@ import {
 import { keys } from "@mantine/utils";
 import { useForm, zodResolver } from "@mantine/form";
 import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
-import { ContactSchema } from "~/utils/admin/types.server";
+import { ContactSchema } from "~/utils/admin/types";
 
 const useStyles = createStyles((theme) => ({
   rowSelected: {

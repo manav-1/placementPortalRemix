@@ -19,6 +19,25 @@ async function seed() {
       mobile: "8745007937",
     },
   });
+  await prisma.stream.createMany({
+    data: [
+      {
+        name: "Web Development",
+      },
+      {
+        name: "ABC",
+      },
+      {
+        name: "DEF",
+      },
+      {
+        name: "GHI",
+      },
+      {
+        name: "JKL",
+      },
+    ],
+  });
 }
 
 seed()

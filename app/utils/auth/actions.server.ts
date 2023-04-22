@@ -1,5 +1,5 @@
 import { type ActionFunction } from "@remix-run/server-runtime";
-import { LoginSchema, RegisterSchema } from "./types.server";
+import { LoginSchema, RegisterSchema } from "./types";
 import { login, register } from "./auth.server";
 import { UserRole } from "@prisma/client";
 import { notFound, serverError, unauthorized, forbidden } from "remix-utils";

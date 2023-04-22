@@ -7,8 +7,9 @@ import {
   Select,
   Badge,
   Flex,
+  ActionIcon,
 } from "@mantine/core";
-import { isNotEmpty, useForm } from "@mantine/form";
+import { isNotEmpty, useForm, zodResolver } from "@mantine/form";
 import {
   IconBrandBehance,
   IconBrandGithub,
@@ -18,12 +19,18 @@ import {
   IconGlobe,
   IconLink,
   IconPlus,
+  IconX,
 } from "@tabler/icons-react";
 import { createStyles, rem } from "@mantine/core";
 import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import type { Project, Stream, UserProfile, Portfolio } from "@prisma/client";
 import { LinkType } from "@prisma/client";
 import type { FormEvent } from "react";
+import {
+  PortfolioSchema,
+  ProjectSchema,
+  UserProfileSchema,
+} from "~/utils/user/types";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -69,13 +76,15 @@ const useStyles = createStyles((theme) => ({
   },
 }));
 
+const iconSize = 16;
+const iconStyle = { marginTop: 5 };
 const icons = {
-  [LinkType.GITHUB]: <IconBrandGithub size={16} />,
-  [LinkType.LINKEDIN]: <IconBrandLinkedin size={16} />,
-  [LinkType.WEBSITE]: <IconGlobe size={16} />,
-  [LinkType.PROJECT]: <IconFolder size={16} />,
-  [LinkType.BEHANCE]: <IconBrandBehance size={16} />,
-  [LinkType.OTHER]: <IconLink size={16} />,
+  [LinkType.GITHUB]: <IconBrandGithub style={iconStyle} size={iconSize} />,
+  [LinkType.LINKEDIN]: <IconBrandLinkedin style={iconStyle} size={iconSize} />,
+  [LinkType.WEBSITE]: <IconGlobe style={iconStyle} size={iconSize} />,
+  [LinkType.PROJECT]: <IconFolder style={iconStyle} size={iconSize} />,
+  [LinkType.BEHANCE]: <IconBrandBehance style={iconStyle} size={iconSize} />,
+  [LinkType.OTHER]: <IconLink style={iconStyle} size={iconSize} />,
 };
 
 export default function Profile() {
@@ -102,6 +111,8 @@ export default function Profile() {
       firstName: isNotEmpty("First Name is required"),
       lastName: isNotEmpty("Last Name is required"),
       streamId: isNotEmpty("Stream is required"),
+      marks10: isNotEmpty("10th Marks is required"),
+      marks12: isNotEmpty("12th Marks is required"),
     },
   });
 
@@ -113,11 +124,7 @@ export default function Profile() {
       projectURL: "",
       projectType: projectTypes[0],
     },
-    validate: {
-      projectName: isNotEmpty("Project Name is required"),
-      projectURL: isNotEmpty("Project Link is required"),
-      projectType: isNotEmpty("Project Type is required"),
-    },
+    validate: zodResolver(ProjectSchema),
     validateInputOnChange: true,
   });
   const portfolioForm = useForm({
@@ -125,10 +132,7 @@ export default function Profile() {
       portfolioURL: "",
       portfolioType: projectTypes[0],
     },
-    validate: {
-      portfolioURL: isNotEmpty("Project Description is required"),
-      portfolioType: isNotEmpty("Project Type is required"),
-    },
+    validate: zodResolver(PortfolioSchema),
     validateInputOnChange: true,
   });
   const submit = useSubmit();
@@ -138,6 +142,7 @@ export default function Profile() {
     form.validate();
     if (form.isValid()) {
       submit(event.currentTarget);
+      event.currentTarget.reset();
     }
   };
 
@@ -260,11 +265,11 @@ export default function Profile() {
           </div>
         </Form>
 
-        <Flex mt="md">
-          {projects.map((project) => (
-            <CustomBadge key={project.id} data={project} />
-          ))}
-        </Flex>
+        {/* <Flex mt="md"> */}
+        {projects.map((project) => (
+          <CustomBadge key={project.id} data={project} />
+        ))}
+        {/* </Flex> */}
 
         <Form
           onSubmit={(e) => checkFormValidity(portfolioForm, e)}
@@ -328,19 +333,55 @@ function TypeInput({
   );
 }
 
+const RemoveButton = ({ id, type }: { id: string; type: string }) => {
+  const submit = useSubmit();
+  return (
+    <ActionIcon
+      onClick={() => {
+        submit(null, { action: `/user/${type}/${id}`, method: "DELETE" });
+      }}
+      size="xs"
+      color="blue"
+      radius="xl"
+      variant="transparent"
+    >
+      <IconX size={rem(10)} />
+    </ActionIcon>
+  );
+};
+
 function CustomBadge({
   data,
 }: {
-  data: { url: string; name?: string; type: LinkType };
+  data: {
+    id: string;
+    name?: string;
+    url: string;
+    type: LinkType;
+  };
 }) {
+  const { theme } = useStyles();
   return (
-    <Link to={data.url} target="_blank">
-      <Badge mr={"xs"} px="md" py="sm">
-        <Flex>
-          {icons[data.type]}&nbsp; {data.name || data.type}
-        </Flex>
-      </Badge>
-    </Link>
+    <Badge
+      leftSection={icons[data.type]}
+      py="sm"
+      mr="sm"
+      mt="xs"
+      rightSection={
+        <RemoveButton
+          id={data.id}
+          type={data.name ? "projects" : "portfolio"}
+        />
+      }
+    >
+      <Link
+        style={{ textDecoration: "none", color: theme.colors.blue[9] }}
+        to={data.url}
+        target="_blank"
+      >
+        {data.name || data.type}
+      </Link>
+    </Badge>
   );
 }
 

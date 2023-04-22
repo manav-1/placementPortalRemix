@@ -1,7 +1,7 @@
 import { prisma } from "prisma/prisma.server";
 import * as bcryptjs from "bcryptjs";
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
-import type { LoginInput, PropertyInput, RegisterInput } from "./types.server";
+import type { LoginInput, PropertyInput, RegisterInput } from "./types";
 import type { Prisma, User, UserRole } from "@prisma/client";
 import { createJWTSignedToken, verifyToken } from "../helper/helper.server";
 import createErrors from "http-errors";
@@ -151,7 +151,11 @@ export async function getUserPermissions(
     throw logout(request);
   }
   if (!roles.includes(user.role)) {
-    throw createErrors[403]("Unauthorized");
+    throw new Response("Unauthorized", {
+      status: 403,
+      statusText:
+        "You are not authorized to access this resource. Please contact your administrator.",
+    });
   }
   return user;
 }
