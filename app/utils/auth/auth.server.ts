@@ -2,7 +2,8 @@ import { prisma } from "prisma/prisma.server";
 import * as bcryptjs from "bcryptjs";
 import { createCookieSessionStorage, redirect } from "@remix-run/node";
 import type { LoginInput, PropertyInput, RegisterInput } from "./types";
-import type { Prisma, User, UserRole } from "@prisma/client";
+import type { Prisma, User } from "@prisma/client";
+import { UserRole } from "@prisma/client";
 import { createJWTSignedToken, verifyToken } from "../helper/helper.server";
 import createErrors from "http-errors";
 
@@ -18,7 +19,7 @@ const storage = createCookieSessionStorage({
     secrets: [sessionSecret],
     sameSite: "lax",
     path: "/",
-    maxAge: 60 * 60 * 24 * 30,
+    maxAge: 60 * 60 * 24 * 5,
     httpOnly: true,
   },
 });
@@ -61,11 +62,11 @@ export async function login({ email, password }: LoginInput) {
   const userClause: Prisma.UserWhereUniqueInput = { email };
   const user = await prisma.user.findUnique({ where: userClause });
   if (!user) {
-    throw await createErrors[404]("User not found");
+    throw createErrors[404]("User not found");
   }
   const isPasswordValid = await bcryptjs.compare(password, user.password);
   if (!isPasswordValid) {
-    throw await createErrors[401]("Password is invalid");
+    throw createErrors[401]("Password is invalid");
   }
   return createUserSession(user.id, "/dashboard");
 }
@@ -144,7 +145,12 @@ export async function getUser(request: Request) {
 
 export async function getUserPermissions(
   request: Request,
-  roles: UserRole[] = ["ADMIN", "SUB_ADMIN", "SUPER_ADMIN", "USER"]
+  roles: UserRole[] = [
+    UserRole.SUPER_ADMIN,
+    UserRole.ADMIN,
+    UserRole.SUB_ADMIN,
+    UserRole.USER,
+  ]
 ) {
   const user = await getUser(request);
   if (!user) {
@@ -175,8 +181,7 @@ export async function requireUserId(
 
 export async function logout(request: Request) {
   const session = await getUserSession(request);
-
-  return redirect("/", {
+  throw redirect("/", {
     headers: {
       "Set-Cookie": await storage.destroySession(session),
     },

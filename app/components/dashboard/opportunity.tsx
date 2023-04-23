@@ -13,11 +13,13 @@ import {
   Tooltip,
   Grid,
   Title,
+  Flex,
 } from "@mantine/core";
 import { Link, useLoaderData } from "@remix-run/react";
 import companyPlaceholder from "../../../assets/company-placeholder.png";
 import type { Opportunity } from "@prisma/client";
 import { DateTime } from "luxon";
+import PaginationWithSearch from "./paginate";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -171,14 +173,16 @@ export function OpportunityCard({
 }
 
 export default function Opportunities() {
-  const { opportunities } = useLoaderData();
-
+  const { opportunities, pagination } = useLoaderData();
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Title order={2} size="h1" mb="md" weight={900}>
-          Opportunities
-        </Title>
+        <Flex justify={"space-between"}>
+          <Title order={2} size="h1" mb="md" weight={900}>
+            Opportunities
+          </Title>
+          <PaginationWithSearch pagination={pagination} />
+        </Flex>
       </Grid.Col>
       {opportunities.map((item: Opportunity) => (
         <OpportunityCard

@@ -14,7 +14,9 @@ import {
   Title,
 } from "@mantine/core";
 import { Link, useLoaderData } from "@remix-run/react";
-import type { Key } from "react";
+import type { Opportunity } from "@prisma/client";
+import { DateTime } from "luxon";
+import PaginationWithSearch from "./paginate";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -153,7 +155,7 @@ export function OpportunityCard({
 }
 
 export default function Opportunities() {
-  const { appliedOpportunities } = useLoaderData();
+  const { appliedOpportunities, pagination } = useLoaderData();
 
   return (
     <Grid>
@@ -161,25 +163,24 @@ export default function Opportunities() {
         <Title order={2} size="h1" mb="md" weight={900}>
           Applied Opportunities
         </Title>
+        <PaginationWithSearch pagination={pagination} />
       </Grid.Col>
-      {Array.from(Array(10).keys()).map(
-        (item: any, index: Key | null | undefined) => (
-          <OpportunityCard
-            key={index}
-            name="Placement Opportunity"
-            deadline="12/12/2021"
-            linkedin="https://www.linkedin.com/in/abc"
-            url="https://www.abc.com"
-            type="Placement"
-            companyImage={
-              Math.random() > 0.5 ? "https://picsum.photos/200/300" : undefined
-            }
-            companyName="Lorem ipsum dolor sit amet, consectetur adipiscing elit."
-            description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed euismod, nunc ut aliquam aliquam, nunc nisl aliquet nisl, eget aliquam nisl nisl sit amet lorem. Sed euismod, nunc ut aliquam aliquam, nunc nisl aliquet nisl, eget aliquam nisl nisl sit amet lorem."
-            jd="https://google.com"
-          />
-        )
-      )}
+      {appliedOpportunities.map((item: Opportunity) => (
+        <OpportunityCard
+          key={item.id}
+          name={item.name}
+          deadline={DateTime.fromJSDate(new Date(item.deadline)).toFormat(
+            "dd LLL yyyy"
+          )}
+          linkedin={item.linkedin}
+          url={item.url}
+          type={item.type}
+          companyImage={item.companyImage || undefined}
+          companyName={item.company}
+          description={item.description}
+          jd={item.jobDesc}
+        />
+      ))}
     </Grid>
   );
 }

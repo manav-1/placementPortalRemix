@@ -13,23 +13,16 @@ import {
   TextInput,
   Flex,
   Tooltip,
-  Pagination,
 } from "@mantine/core";
 import {
   IconAddressBook,
   IconBrandTelegram,
-  IconSearch,
   IconTrash,
 } from "@tabler/icons-react";
 import { useForm, zodResolver } from "@mantine/form";
-import {
-  useActionData,
-  useLoaderData,
-  useLocation,
-  useNavigate,
-  useSubmit,
-} from "@remix-run/react";
+import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
 import { ContactSchema } from "~/utils/admin/types";
+import PaginationWithSearch from "./paginate";
 
 const useStyles = createStyles((theme) => ({
   rowSelected: {
@@ -96,7 +89,6 @@ function Th({ children }: ThProps) {
 
 export default function Contacts() {
   const submit = useSubmit();
-  const navigate = useNavigate();
 
   const { id, name, contacts, pagination } = useLoaderData<{
     id: string;
@@ -107,21 +99,12 @@ export default function Contacts() {
       totalPages: number;
     };
   }>();
-  const [currentPage, setCurrentPage] = useState(pagination.page);
-
-  const location = useLocation();
-
-  const handlePageChange = (newPage: number) => {
-    setCurrentPage(newPage);
-    navigate(`${location.pathname}?page=${newPage}&search=${search}`);
-  };
 
   const actionData = useActionData();
   if (actionData?.contact) contacts.push(actionData.contact);
 
   const { classes, cx } = useStyles();
   const [selection, setSelection] = useState<string[]>([]);
-  const [search, setSearch] = useState("");
 
   const toggleRow = (id: string) =>
     setSelection((current) =>
@@ -134,19 +117,13 @@ export default function Contacts() {
       current.length === contacts.length ? [] : contacts.map((item) => item.id)
     );
 
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const { value } = event.currentTarget;
-    setSearch(value);
-    navigate(`${location.pathname}?search=${value}`);
-  };
-
   const rows = contacts.map((item: any) => {
     const selected = selection.includes(item.id);
     return (
       <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
         <td>
           <Checkbox
-            checked={selection.includes(item.id)}
+            checked={selected}
             onChange={() => toggleRow(item.id)}
             transitionDuration={0}
           />
@@ -212,16 +189,13 @@ export default function Contacts() {
 
   return (
     <ScrollArea>
-      <Title order={2} size="h1" mb="md" weight={900}>
-        Contacts Database
-      </Title>
-      <TextInput
-        placeholder="Search by any field"
-        mb="md"
-        icon={<IconSearch size="0.9rem" stroke={1.5} />}
-        value={search}
-        onChange={handleSearchChange}
-      />
+      <Flex justify={"space-between"} align={"center"}>
+        <Title order={2} size="h1" mb="md" weight={900}>
+          Contacts Database
+        </Title>
+        <PaginationWithSearch pagination={pagination} />
+      </Flex>
+
       <Table miw={800} verticalSpacing="sm">
         <thead>
           <tr>
@@ -287,13 +261,6 @@ export default function Contacts() {
           {rows}
         </tbody>
       </Table>
-      <Pagination
-        variant="outline"
-        color="gray"
-        value={currentPage}
-        total={pagination.totalPages}
-        onChange={handlePageChange}
-      />
     </ScrollArea>
   );
 }

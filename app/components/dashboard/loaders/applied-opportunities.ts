@@ -1,6 +1,7 @@
 import { prisma } from "prisma/prisma.server";
 import { getUserPermissions } from "~/utils/auth/auth.server";
 import { json, Response, type LoaderFunction } from "@remix-run/node";
+import { Prisma } from "@prisma/client";
 
 export const AppliedOpportunityLoader: LoaderFunction = async ({ request }) => {
   const { id: userId } = await getUserPermissions(request);
@@ -27,9 +28,43 @@ export const AppliedOpportunityLoader: LoaderFunction = async ({ request }) => {
       statusText:
         "No stream found for this user, Please visit profile section to update profile and see opportunitites",
     });
+
+  const currentURL = new URL(request.url);
+  const page = Number(currentURL.searchParams.get("page") || "1");
+  const search = currentURL.searchParams.get("search") || "";
+  const perPage = 15;
+  const offset = (page - 1) * perPage;
+
+  const whereCondition: Prisma.OpportunityWhereInput = {
+    AND: [
+      {
+        opportunityStreamLink: {
+          every: {
+            streamId: userProfile.streamId,
+          },
+        },
+      },
+      {
+        OR: [
+          { company: { contains: search, mode: "insensitive" } },
+          { name: { contains: search, mode: "insensitive" } },
+          { description: { contains: search, mode: "insensitive" } },
+        ],
+      },
+    ],
+  };
+
+  const totalPages = await prisma.opportunityUserLink.count({
+    where: { opportunity: whereCondition },
+  });
+
   const appliedOpportunities = await prisma.opportunityUserLink.findMany({
+    skip: offset,
+    take: perPage,
+    orderBy: { createdAt: "desc" },
     where: {
       userId,
+      opportunity: whereCondition,
     },
     include: {
       opportunity: true,
@@ -48,5 +83,10 @@ export const AppliedOpportunityLoader: LoaderFunction = async ({ request }) => {
   }
   return json({
     appliedOpportunities,
+    pagination: {
+      page,
+      perPage,
+      totalPages,
+    },
   });
 };

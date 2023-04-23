@@ -23,15 +23,15 @@ export default function AddOpportunity() {
   }>();
   const form = useForm({
     initialValues: {
-      name: "",
-      company: "",
-      description: "",
-      url: "",
-      companyImage: "",
-      linkedin: "",
-      jobDesc: "",
+      name: "Backend Developer",
+      company: "Anycover",
+      description: "Backend Developer",
+      url: "https://google.com",
+      companyImage: "https://i.ibb.co/pnHPf9w/spaceship.png",
+      linkedin: "https://i.ibb.co/pnHPf9w/spaceship.png",
+      jobDesc: "https://i.ibb.co/pnHPf9w/spaceship.png",
       deadline: new Date(),
-      type: "",
+      type: "PART_TIME",
       streams: [],
       isActive: false,
     },
