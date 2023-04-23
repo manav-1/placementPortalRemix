@@ -34,7 +34,6 @@ export default function PaginationWithSearch({
         variant="filled"
         size="sm"
         radius="sm"
-        style={{ width: 200 }}
       />
     </Group>
   );
