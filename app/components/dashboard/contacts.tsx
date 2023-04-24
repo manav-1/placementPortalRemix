@@ -57,6 +57,15 @@ const useStyles = createStyles((theme) => ({
     backgroundColor: "red",
     margin: `${theme.spacing.md}`,
   },
+  headerContainer: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    [theme.fn.smallerThan("md")]: {
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      flexDirection: "column",
+    },
+  },
 }));
 
 interface ThProps {
@@ -189,7 +198,7 @@ export default function Contacts() {
 
   return (
     <ScrollArea>
-      <Flex justify={"space-between"} align={"center"}>
+      <Flex className={classes.headerContainer}>
         <Title order={2} size="h1" mb="md" weight={900}>
           Contacts Database
         </Title>

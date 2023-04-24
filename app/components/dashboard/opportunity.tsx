@@ -15,9 +15,14 @@ import {
   Title,
   Flex,
 } from "@mantine/core";
-import { Link, useLoaderData } from "@remix-run/react";
+import {
+  Link,
+  useLoaderData,
+  useLocation,
+  useNavigation,
+  useSubmit,
+} from "@remix-run/react";
 import companyPlaceholder from "../../../assets/company-placeholder.png";
-import type { Opportunity } from "@prisma/client";
 import { DateTime } from "luxon";
 import PaginationWithSearch from "./paginate";
 
@@ -73,40 +78,67 @@ const useStyles = createStyles((theme) => ({
   footer: {
     marginTop: theme.spacing.md,
   },
+  headerContainer: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    [theme.fn.smallerThan("md")]: {
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      flexDirection: "column",
+    },
+  },
 }));
 
-interface ArticleCardProps {
+interface OpportunityCardProps {
+  id: string;
   deadline: string;
   linkedin: string;
   url: string;
   companyImage?: string;
-  companyName: string;
+  company: string;
   description: string;
-  jd: string;
+  jobDesc: string;
   name: string;
   type: string;
 }
 
 export function OpportunityCard({
   className,
-  companyImage,
-  url,
-  title,
-  description,
-  companyName,
-  deadline,
-  jd,
-  linkedin,
-  name,
-  type,
+  opportunity,
   ...others
-}: ArticleCardProps &
-  Omit<React.ComponentPropsWithoutRef<"div">, keyof ArticleCardProps>) {
+}: {
+  className?: string;
+  opportunity: OpportunityCardProps;
+}) {
+  const submit = useSubmit();
+  const location = useLocation();
+  const navigation = useNavigation();
+
   const { classes, cx } = useStyles();
+  const {
+    id,
+    companyImage,
+    url,
+    description,
+    company,
+    deadline,
+    jobDesc,
+    linkedin,
+    name,
+    type,
+  } = opportunity;
+
   const linkProps = {
     href: url,
     target: "_blank",
     rel: "noopener noreferrer",
+  };
+
+  const handleApplyForOpportunity = async (opportunityId: string) => {
+    submit(null, {
+      method: "POST",
+      action: `${location.pathname}/${opportunityId}`,
+    });
   };
 
   return (
@@ -123,17 +155,16 @@ export function OpportunityCard({
           </a>
         </Card.Section>
         <Group position="apart" align="center" className={classes.rating}>
-          <Badge variant="light">{deadline}</Badge>
+          <Badge variant="light">
+            {DateTime.fromISO(deadline).toLocaleString(DateTime.DATE_MED)}
+          </Badge>
           <Badge variant="light">{type}</Badge>
         </Group>
-        <Text className={classes.title} fw={500} component="a" {...linkProps}>
-          {title}
-        </Text>
 
         <Text fz="md" inline>
           {name}
           <Text fz="sm" mt="sm" inline>
-            {companyName}
+            {company}
           </Text>
         </Text>
 
@@ -160,11 +191,18 @@ export function OpportunityCard({
           </Group>
           <Group spacing={8}>
             <Tooltip label="Job Description">
-              <Link to={jd} target="_blank">
-                <Button variant="default">Information</Button>
+              <Link to={jobDesc} target="_blank">
+                <Button variant="light">Information</Button>
               </Link>
             </Tooltip>
-            <Button>Apply</Button>
+            <Tooltip label="Apply">
+              <Button
+                disabled={navigation.state === "submitting"}
+                onClick={() => handleApplyForOpportunity(id)}
+              >
+                Apply
+              </Button>
+            </Tooltip>
           </Group>
         </Group>
       </Card>
@@ -174,31 +212,19 @@ export function OpportunityCard({
 
 export default function Opportunities() {
   const { opportunities, pagination } = useLoaderData();
+  const { classes } = useStyles();
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Flex justify={"space-between"}>
+        <Flex className={classes.headerContainer}>
           <Title order={2} size="h1" mb="md" weight={900}>
             Opportunities
           </Title>
           <PaginationWithSearch pagination={pagination} />
         </Flex>
       </Grid.Col>
-      {opportunities.map((item: Opportunity) => (
-        <OpportunityCard
-          key={item.id}
-          name={item.name}
-          deadline={DateTime.fromJSDate(new Date(item.deadline)).toFormat(
-            "dd LLL yyyy"
-          )}
-          linkedin={item.linkedin}
-          url={item.url}
-          type={item.type}
-          companyImage={item.companyImage || undefined}
-          companyName={item.company}
-          description={item.description}
-          jd={item.jobDesc}
-        />
+      {opportunities.map((item: OpportunityCardProps) => (
+        <OpportunityCard key={item.id} opportunity={item} />
       ))}
     </Grid>
   );

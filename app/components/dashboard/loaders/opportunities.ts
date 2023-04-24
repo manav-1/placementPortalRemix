@@ -39,8 +39,17 @@ export const OpportunityLoader: LoaderFunction = async ({ request }) => {
     AND: [
       {
         opportunityStreamLink: {
-          every: {
+          some: {
             streamId: userProfile.streamId,
+          },
+        },
+      },
+      {
+        opportunityUserLink: {
+          every: {
+            NOT: {
+              userId: userId,
+            },
           },
         },
       },
@@ -64,6 +73,13 @@ export const OpportunityLoader: LoaderFunction = async ({ request }) => {
     orderBy: { createdAt: "desc" },
     where: whereCondition,
   });
+  if (!opportunities || opportunities.length === 0) {
+    throw new Response("No Opportunities", {
+      status: 418,
+      statusText:
+        "No opportunities to apply currently, Looks like you are all set",
+    });
+  }
   return json({
     opportunities,
     pagination: {

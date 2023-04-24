@@ -92,6 +92,8 @@ model OpportunityStreamLink {
   streamId      String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  @@unique([opportunityId, streamId])
 }
 
 model OpportunityUserLink {
@@ -102,6 +104,8 @@ model OpportunityUserLink {
   userId        String
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
+
+  @@unique([opportunityId, userId])
 }
 
 model Stream {

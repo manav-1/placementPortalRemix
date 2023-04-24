@@ -1,7 +1,7 @@
 import { prisma } from "prisma/prisma.server";
 import { getUserPermissions } from "~/utils/auth/auth.server";
 import { json, Response, type LoaderFunction } from "@remix-run/node";
-import { Prisma } from "@prisma/client";
+import type { Prisma } from "@prisma/client";
 
 export const AppliedOpportunityLoader: LoaderFunction = async ({ request }) => {
   const { id: userId } = await getUserPermissions(request);
@@ -39,7 +39,7 @@ export const AppliedOpportunityLoader: LoaderFunction = async ({ request }) => {
     AND: [
       {
         opportunityStreamLink: {
-          every: {
+          some: {
             streamId: userProfile.streamId,
           },
         },

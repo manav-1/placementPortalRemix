@@ -12,6 +12,7 @@ import {
   Tooltip,
   Grid,
   Title,
+  Flex,
 } from "@mantine/core";
 import { Link, useLoaderData } from "@remix-run/react";
 import type { Opportunity } from "@prisma/client";
@@ -70,36 +71,42 @@ const useStyles = createStyles((theme) => ({
   footer: {
     marginTop: theme.spacing.md,
   },
+  headerContainer: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    [theme.fn.smallerThan("md")]: {
+      justifyContent: "flex-start",
+      alignItems: "flex-start",
+      flexDirection: "column",
+    },
+  },
 }));
 
-interface ArticleCardProps {
+interface OpportunityCardProps {
+  id: string;
   deadline: string;
   linkedin: string;
   url: string;
   companyImage?: string;
-  companyName: string;
+  company: string;
   description: string;
-  jd: string;
+  jobDesc: string;
   name: string;
   type: string;
 }
 
 export function OpportunityCard({
   className,
-  companyImage,
-  url,
-  title,
-  description,
-  companyName,
-  deadline,
-  jd,
-  linkedin,
-  name,
-  type,
+  opportunity,
   ...others
-}: ArticleCardProps &
-  Omit<React.ComponentPropsWithoutRef<"div">, keyof ArticleCardProps>) {
+}: {
+  className?: string;
+  opportunity: OpportunityCardProps;
+}) {
   const { classes, cx } = useStyles();
+  console.log(opportunity);
+  const { url, description, company, deadline, jobDesc, linkedin, name, type } =
+    opportunity;
 
   return (
     <Grid.Col xs={12} md={6} lg={4} xl={3}>
@@ -117,7 +124,7 @@ export function OpportunityCard({
         <Text fz="md" inline>
           {name}
           <Text fz="sm" mt="sm" inline>
-            {companyName}
+            {company}
           </Text>
         </Text>
         <Text fz="md" color="dimmed" lineClamp={4}>
@@ -143,7 +150,7 @@ export function OpportunityCard({
           </Group>
           <Group spacing={8}>
             <Tooltip label="Job Description">
-              <Link to={jd} target="_blank">
+              <Link to={jobDesc} target="_blank">
                 <Button variant="default">Information</Button>
               </Link>
             </Tooltip>
@@ -156,31 +163,23 @@ export function OpportunityCard({
 
 export default function Opportunities() {
   const { appliedOpportunities, pagination } = useLoaderData();
+  const { classes } = useStyles();
 
   return (
     <Grid>
       <Grid.Col span={12}>
-        <Title order={2} size="h1" mb="md" weight={900}>
-          Applied Opportunities
-        </Title>
-        <PaginationWithSearch pagination={pagination} />
+        <Flex className={classes.headerContainer}>
+          <Title order={2} size="h1" mb="md" weight={900}>
+            Applied Opportunities
+          </Title>
+          <PaginationWithSearch pagination={pagination} />
+        </Flex>
       </Grid.Col>
-      {appliedOpportunities.map((item: Opportunity) => (
-        <OpportunityCard
-          key={item.id}
-          name={item.name}
-          deadline={DateTime.fromJSDate(new Date(item.deadline)).toFormat(
-            "dd LLL yyyy"
-          )}
-          linkedin={item.linkedin}
-          url={item.url}
-          type={item.type}
-          companyImage={item.companyImage || undefined}
-          companyName={item.company}
-          description={item.description}
-          jd={item.jobDesc}
-        />
-      ))}
+      {appliedOpportunities.map(
+        (item: { id: string; opportunity: OpportunityCardProps }) => (
+          <OpportunityCard key={item.id} opportunity={item.opportunity} />
+        )
+      )}
     </Grid>
   );
 }

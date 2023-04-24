@@ -23,7 +23,7 @@ export const createOpportunity = async (
     },
   });
 
-  const streams = prisma.opportunityStreamLink.createMany({
+  const streams = await prisma.opportunityStreamLink.createMany({
     data: opportunityData.streams.map((stream) => ({
       streamId: stream,
       opportunityId: opportunity.id,
