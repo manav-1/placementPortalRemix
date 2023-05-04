@@ -15,9 +15,8 @@ import {
   Flex,
 } from "@mantine/core";
 import { Link, useLoaderData } from "@remix-run/react";
-import type { Opportunity } from "@prisma/client";
-import { DateTime } from "luxon";
 import PaginationWithSearch from "./paginate";
+import { DateTime } from "luxon";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -104,7 +103,6 @@ export function OpportunityCard({
   opportunity: OpportunityCardProps;
 }) {
   const { classes, cx } = useStyles();
-  console.log(opportunity);
   const { url, description, company, deadline, jobDesc, linkedin, name, type } =
     opportunity;
 
@@ -117,7 +115,11 @@ export function OpportunityCard({
         {...others}
       >
         <Group position="apart" align="center" mb={"sm"}>
-          <Badge variant="light">{deadline}</Badge>
+          <Badge variant="light">
+            {DateTime.fromJSDate(new Date(deadline)).toLocaleString(
+              DateTime.DATETIME_MED
+            )}
+          </Badge>
           <Badge variant="light">{type}</Badge>
         </Group>
 
