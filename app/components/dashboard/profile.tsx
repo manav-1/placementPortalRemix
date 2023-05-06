@@ -6,7 +6,6 @@ import {
   Tooltip,
   Select,
   Badge,
-  Flex,
   ActionIcon,
 } from "@mantine/core";
 import { isNotEmpty, useForm, zodResolver } from "@mantine/form";
@@ -26,11 +25,7 @@ import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import type { Project, Stream, UserProfile, Portfolio } from "@prisma/client";
 import { LinkType } from "@prisma/client";
 import type { FormEvent } from "react";
-import {
-  PortfolioSchema,
-  ProjectSchema,
-  UserProfileSchema,
-} from "~/utils/user/types";
+import { PortfolioSchema, ProjectSchema } from "~/utils/user/types";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -274,7 +269,7 @@ export default function Profile() {
         <Form
           onSubmit={(e) => checkFormValidity(portfolioForm, e)}
           method="POST"
-          action="/user/projects"
+          action="/user/portfolio"
         >
           <div className={classes.linksContainer}>
             <TextInput
@@ -294,11 +289,9 @@ export default function Profile() {
             />
           </div>
         </Form>
-        <Flex mt="md">
-          {portfolios.map((portfolio) => (
-            <CustomBadge key={portfolio.id} data={portfolio} />
-          ))}
-        </Flex>
+        {portfolios.map((portfolio) => (
+          <CustomBadge key={portfolio.id} data={portfolio} />
+        ))}
       </Grid.Col>
     </Grid>
   );

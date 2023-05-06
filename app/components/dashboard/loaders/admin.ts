@@ -16,11 +16,10 @@ export const AdminLoader: LoaderFunction = async ({ request }) => {
   return json({
     opportunities: opportunities.map((opportunity: Opportunity) => ({
       value: opportunity.id,
-      label: `${opportunity.name} - ${
-        opportunity.company
-      } - ${DateTime.fromJSDate(new Date(opportunity.createdAt)).toLocaleString(
-        DateTime.DATE_MED
-      )}`,
+      group: opportunity.company,
+      label: `${opportunity.name} - ${DateTime.fromJSDate(
+        new Date(opportunity.createdAt)
+      ).toLocaleString(DateTime.DATE_MED)}`,
     })),
   });
 };
@@ -34,15 +33,30 @@ export const AdminOpportunityLoader: LoaderFunction = async ({
     UserRole.ADMIN,
     UserRole.SUB_ADMIN,
   ]);
-  const { opportunityId } = params;
+  const currentURL = new URL(request.url);
+  const selectedOpportunities = currentURL.searchParams
+    .get("selectedOpportunities")
+    ?.split(",");
+  if (!selectedOpportunities || selectedOpportunities.length === 0)
+    throw new Response("No Opportunities", {
+      status: 418,
+      statusText: "No opportunities selected",
+    });
+
   const opportunities = await prisma.opportunityUserLink.findMany({
     where: {
-      opportunityId: opportunityId,
+      opportunityId: { in: selectedOpportunities },
     },
     include: {
       user: {
         include: {
-          userProfile: true,
+          userProfile: {
+            include: {
+              links: true,
+              stream: true,
+              projects: true,
+            },
+          },
         },
       },
       opportunity: true,

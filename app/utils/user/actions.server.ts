@@ -9,7 +9,6 @@ import {
   deleteProject,
 } from "./user.server";
 import type { LinkType } from "@prisma/client";
-import { prisma } from "prisma/prisma.server";
 
 export const ProfileAction: ActionFunction = async ({ request }) => {
   const { id: userId } = await getUserPermissions(request);
@@ -66,10 +65,6 @@ export const AddPortfolio: ActionFunction = async ({ request }) => {
   const formData = await request.formData();
   const portfolioURL = formData.get("portfolioURL") as string;
   const portfolioType = formData.get("portfolioType") as LinkType;
-
-  console.log(portfolioURL, portfolioType);
-  console.log(Object.entries(formData));
-
   const portfolio = { userId, portfolioURL, portfolioType };
   PortfolioSchema.parse(portfolio);
   await addPortfolio(portfolio);

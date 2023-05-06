@@ -28,7 +28,7 @@ export const ProjectSchema = z.object({
 
 export const PortfolioSchema = z.object({
   portfolioURL: z.string().url(),
-  projectType: z.union([
+  portfolioType: z.union([
     z.literal(LinkType.LINKEDIN),
     z.literal(LinkType.GITHUB),
     z.literal(LinkType.WEBSITE),
