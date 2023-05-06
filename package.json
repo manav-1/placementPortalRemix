@@ -5,7 +5,7 @@
     "build": "remix build",
     "dev": "remix dev",
     "typecheck": "tsc",
-    "postbuild": "npx prisma db push && npx prisma db seed"
+    "postbuild": "npx prisma db push --accept-data-loss && npx prisma db seed"
   },
   "prisma": {
     "schema": "prisma/schema.prisma",
