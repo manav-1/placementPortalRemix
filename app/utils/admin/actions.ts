@@ -1,9 +1,9 @@
 import { type ActionFunction } from "@remix-run/node";
-import { getUserPermissions } from "../auth/auth.server";
-import { AddOpportunitySchema, ContactSchema } from "./types";
-import { createContact, createOpportunity } from "./admin.server";
 import type { OpportunityType } from "@prisma/client";
 import { UserRole } from "@prisma/client";
+import { getUserPermissions } from "../auth/auth.server";
+import { AddOpportunitySchema, ContactSchema, UpdateUserSchema } from "./types";
+import { createContact, createOpportunity, updateUser } from "./admin.server";
 
 export const ContactAction: ActionFunction = async ({ request }) => {
   try {
@@ -84,4 +84,39 @@ export const AddOpportunityAction: ActionFunction = async ({ request }) => {
   AddOpportunitySchema.parse(opportunityData);
   const opportunity = await createOpportunity(opportunityData, id);
   return opportunity;
+};
+
+export const updateUserAction: ActionFunction = async ({ request }) => {
+  await getUserPermissions(request, [
+    UserRole.ADMIN,
+    UserRole.SUPER_ADMIN,
+    UserRole.SUB_ADMIN,
+  ]);
+  const form = await request.formData();
+
+  const userId = form.get("id") as string;
+  const name = form.get("name") as string;
+  const email = form.get("email") as string;
+  const role = form.get("role") as UserRole;
+  const mobile = form.get("mobile") as string;
+
+  if (
+    !(
+      role === UserRole.ADMIN ||
+      role === UserRole.USER ||
+      role === UserRole.SUB_ADMIN
+    )
+  )
+    throw new Response("Invalid Role", { status: 400 });
+  const userData = {
+    name,
+    email,
+    mobile,
+    role,
+  };
+
+  UpdateUserSchema.parse(userData);
+
+  const user = await updateUser(userData, userId);
+  return user;
 };

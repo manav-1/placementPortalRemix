@@ -1,4 +1,4 @@
-import { OpportunityType } from "@prisma/client";
+import { OpportunityType, UserRole } from "@prisma/client";
 import { z } from "zod";
 
 export const ContactSchema = z.object({
@@ -33,5 +33,17 @@ export const AddOpportunitySchema = z.object({
     .nonempty({ message: "Select atleast one stream" }),
 });
 
+export const UpdateUserSchema = z.object({
+  name: z.string().nonempty({ message: "Name is Required" }),
+  email: z.string().nonempty({ message: "Email is Required" }),
+  mobile: z.string().nonempty({ message: "Mobile Number is Required" }),
+  role: z.union([
+    z.literal(UserRole.ADMIN),
+    z.literal(UserRole.SUB_ADMIN),
+    z.literal(UserRole.USER),
+  ]),
+});
+
 export type ContactType = z.infer<typeof ContactSchema>;
 export type AddOpportunityType = z.infer<typeof AddOpportunitySchema>;
+export type UpdateUserType = z.infer<typeof UpdateUserSchema>;

@@ -1,5 +1,5 @@
 import { prisma } from "prisma/prisma.server";
-import type { AddOpportunityType, ContactType } from "./types";
+import type { AddOpportunityType, ContactType, UpdateUserType } from "./types";
 import { json } from "@remix-run/node";
 
 export const createContact = async (contactData: ContactType) => {
@@ -33,4 +33,17 @@ export const createOpportunity = async (
     opportunity,
     streams,
   });
+};
+
+export const updateUser = async (userData: UpdateUserType, id: string) => {
+  const user = await prisma.user.update({
+    where: {
+      id,
+    },
+    data: userData,
+    select: {
+      id: true,
+    },
+  });
+  return user;
 };

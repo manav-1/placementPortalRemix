@@ -13,6 +13,8 @@ export const AdminLoader: LoaderFunction = async ({ request }) => {
   ]);
   const opportunities = await prisma.opportunity.findMany({});
 
+  const users = await prisma.user.findMany({});
+
   return json({
     opportunities: opportunities.map((opportunity: Opportunity) => ({
       value: opportunity.id,
@@ -21,6 +23,7 @@ export const AdminLoader: LoaderFunction = async ({ request }) => {
         new Date(opportunity.createdAt)
       ).toLocaleString(DateTime.DATE_MED)}`,
     })),
+    users,
   });
 };
 
