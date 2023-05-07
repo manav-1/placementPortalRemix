@@ -12,7 +12,7 @@ import {
   Title,
   rem,
 } from "@mantine/core";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, useSubmit } from "@remix-run/react";
 import { useState } from "react";
 import * as excelJs from "exceljs";
 import { type User } from "@prisma/client";
@@ -128,7 +128,7 @@ export default function Admin() {
 
 const Row = ({ user }: { user: User }) => {
   const [editable, setEditable] = useState(false);
-
+  const submit = useSubmit();
   const userForm = useForm({
     initialValues: {
       name: user.name,
@@ -149,9 +149,9 @@ const Row = ({ user }: { user: User }) => {
       formData.append("role", userForm.values.role);
       formData.append("isActive", userForm.values.isActive.toString());
       formData.append("id", user.id);
-      await fetch("/dashboard/admin/user", {
+      submit(formData, {
         method: "PUT",
-        body: formData,
+        action: "/dashboard/admin/user",
       });
       setEditable(false);
     }

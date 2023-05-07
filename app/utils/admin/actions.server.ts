@@ -1,4 +1,4 @@
-import { type ActionFunction } from "@remix-run/node";
+import { redirect, type ActionFunction } from "@remix-run/node";
 import type { OpportunityType } from "@prisma/client";
 import { UserRole } from "@prisma/client";
 import { getUserPermissions } from "../auth/auth.server";
@@ -125,8 +125,8 @@ export const UpdateUserAction: ActionFunction = async ({ request }) => {
 
     UpdateUserSchema.parse(userData);
 
-    const user = await updateUser(userData, userId);
-    return user;
+    await updateUser(userData, userId);
+    return redirect("/dashboard/admin/");
   }
-  return null;
+  return redirect("/dashboard/admin/");
 };
