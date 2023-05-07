@@ -16,7 +16,7 @@ import {
 } from "@mantine/core";
 import { Link, useLoaderData } from "@remix-run/react";
 import PaginationWithSearch from "./paginate";
-import { DateTime } from "luxon";
+import dayjs from "dayjs";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -116,9 +116,7 @@ export function OpportunityCard({
       >
         <Group position="apart" align="center" mb={"sm"}>
           <Badge variant="light">
-            {DateTime.fromJSDate(new Date(deadline)).toLocaleString(
-              DateTime.DATETIME_MED
-            )}
+            {dayjs(deadline).format("ddd, DD MMM YYYY, hh:mm A")}
           </Badge>
           <Badge variant="light">{type}</Badge>
         </Group>

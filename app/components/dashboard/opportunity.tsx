@@ -23,8 +23,8 @@ import {
   useSubmit,
 } from "@remix-run/react";
 import companyPlaceholder from "../../../assets/company-placeholder.png";
-import { DateTime } from "luxon";
 import PaginationWithSearch from "./paginate";
+import dayjs from "dayjs";
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -156,7 +156,7 @@ export function OpportunityCard({
         </Card.Section>
         <Group position="apart" align="center" className={classes.rating}>
           <Badge variant="light">
-            {DateTime.fromISO(deadline).toLocaleString(DateTime.DATE_MED)}
+            {dayjs(deadline).format("ddd, DD MMM YYYY, hh:mm A")}
           </Badge>
           <Badge variant="light">{type}</Badge>
         </Group>

@@ -3,7 +3,7 @@ import { useRouteError } from "@remix-run/react";
 import Contacts from "~/components/dashboard/contacts";
 import { contactsLoader } from "~/components/dashboard/loaders/contacts";
 import { ErrorPage } from "~/components/error";
-import { ContactAction } from "~/utils/admin/actions";
+import { ContactAction } from "~/utils/admin/actions.server";
 
 export default function DashboardContacts() {
   return <Contacts />;

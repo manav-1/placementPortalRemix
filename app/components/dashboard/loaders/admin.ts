@@ -1,7 +1,7 @@
 import type { Opportunity } from "@prisma/client";
 import { UserRole } from "@prisma/client";
 import { json, type LoaderFunction } from "@remix-run/node";
-import { DateTime } from "luxon";
+import dayjs from "dayjs";
 import { prisma } from "prisma/prisma.server";
 import { getUserPermissions } from "~/utils/auth/auth.server";
 
@@ -13,15 +13,19 @@ export const AdminLoader: LoaderFunction = async ({ request }) => {
   ]);
   const opportunities = await prisma.opportunity.findMany({});
 
-  const users = await prisma.user.findMany({});
+  const users = await prisma.user.findMany({
+    where: {
+      role: { not: UserRole.SUPER_ADMIN },
+    },
+  });
 
   return json({
     opportunities: opportunities.map((opportunity: Opportunity) => ({
       value: opportunity.id,
       group: opportunity.company,
-      label: `${opportunity.name} - ${DateTime.fromJSDate(
-        new Date(opportunity.createdAt)
-      ).toLocaleString(DateTime.DATE_MED)}`,
+      label: `${opportunity.name} - ${dayjs(opportunity.deadline).format(
+        "DD MMM YYYY"
+      )}`,
     })),
     users,
   });

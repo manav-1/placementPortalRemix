@@ -170,11 +170,11 @@ export default function Contacts() {
 
   const contactForm = useForm({
     initialValues: {
-      name: "name",
-      email: "email@gmail.com",
+      name: "",
+      email: "",
       mobile: "",
-      position: "position",
-      company: "company",
+      position: "",
+      company: "",
       addedById: id,
     },
     validate: zodResolver(ContactSchema),

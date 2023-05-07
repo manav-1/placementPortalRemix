@@ -42,6 +42,7 @@ export const UpdateUserSchema = z.object({
     z.literal(UserRole.SUB_ADMIN),
     z.literal(UserRole.USER),
   ]),
+  isActive: z.boolean(),
 });
 
 export type ContactType = z.infer<typeof ContactSchema>;

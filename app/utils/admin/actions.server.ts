@@ -86,37 +86,47 @@ export const AddOpportunityAction: ActionFunction = async ({ request }) => {
   return opportunity;
 };
 
-export const updateUserAction: ActionFunction = async ({ request }) => {
-  await getUserPermissions(request, [
-    UserRole.ADMIN,
-    UserRole.SUPER_ADMIN,
-    UserRole.SUB_ADMIN,
-  ]);
-  const form = await request.formData();
+export const UpdateUserAction: ActionFunction = async ({ request }) => {
+  console.log(request.method);
+  if (request.method === "PUT") {
+    await getUserPermissions(request, [
+      UserRole.ADMIN,
+      UserRole.SUPER_ADMIN,
+      UserRole.SUB_ADMIN,
+    ]);
+    const form = await request.formData();
 
-  const userId = form.get("id") as string;
-  const name = form.get("name") as string;
-  const email = form.get("email") as string;
-  const role = form.get("role") as UserRole;
-  const mobile = form.get("mobile") as string;
+    const userId = form.get("id") as string;
+    const name = form.get("name") as string;
+    const email = form.get("email") as string;
+    const role = form.get("role") as UserRole;
+    const mobile = form.get("mobile") as string;
+    const isActive = form.get("isActive") as string;
 
-  if (
-    !(
-      role === UserRole.ADMIN ||
-      role === UserRole.USER ||
-      role === UserRole.SUB_ADMIN
+    console.log(isActive);
+
+    if (
+      !(
+        role === UserRole.ADMIN ||
+        role === UserRole.USER ||
+        role === UserRole.SUB_ADMIN
+      )
     )
-  )
-    throw new Response("Invalid Role", { status: 400 });
-  const userData = {
-    name,
-    email,
-    mobile,
-    role,
-  };
+      throw new Response("Invalid Role", { status: 400 });
+    const userData = {
+      name,
+      email,
+      mobile,
+      role,
+      isActive: isActive === "true",
+    };
 
-  UpdateUserSchema.parse(userData);
+    if (!userId) throw new Response("User Id is required", { status: 400 });
 
-  const user = await updateUser(userData, userId);
-  return user;
+    UpdateUserSchema.parse(userData);
+
+    const user = await updateUser(userData, userId);
+    return user;
+  }
+  return null;
 };
