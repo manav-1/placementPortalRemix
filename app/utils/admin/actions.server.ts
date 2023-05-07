@@ -128,5 +128,5 @@ export const UpdateUserAction: ActionFunction = async ({ request }) => {
     await updateUser(userData, userId);
     return redirect("/dashboard/admin/");
   }
-  return redirect("/dashboard/admin/");
+  throw new Response("Method not allowed", { status: 405 });
 };
