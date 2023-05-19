@@ -24,13 +24,14 @@ import { createStyles, rem } from "@mantine/core";
 import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
 import type { Project, Stream, UserProfile, Portfolio } from "@prisma/client";
 import { LinkType } from "@prisma/client";
-import type { FormEvent } from "react";
+import { type FormEvent } from "react";
 import { PortfolioSchema, ProjectSchema } from "~/utils/user/types";
+import { DropzoneButton } from "./dropzone-button";
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
-    marginBottom: rem(30),
+    marginBottom: theme.spacing.md,
   },
 
   dropzone: {
@@ -49,7 +50,7 @@ const useStyles = createStyles((theme) => ({
     position: "absolute",
     width: rem(250),
     left: `calc(50% - ${rem(125)})`,
-    bottom: rem(-20),
+    bottom: rem(-10),
   },
 
   linksContainer: {
@@ -144,7 +145,11 @@ export default function Profile() {
   return (
     <Grid>
       <Grid.Col lg={10} xl={5} md={12} sm={12}>
-        <form method="POST" onSubmit={(e) => checkFormValidity(profileForm, e)}>
+        <form
+          method="POST"
+          id="profileForm"
+          onSubmit={(e) => checkFormValidity(profileForm, e)}
+        >
           <Title order={2} size="h1" mb="md" weight={900}>
             Your Profile
           </Title>
@@ -219,12 +224,6 @@ export default function Profile() {
             variant="filled"
             {...profileForm.getInputProps("resume")}
           />
-          <Tooltip label="Save Profile">
-            <Button type="submit" mt="md">
-              <IconFileUpload size={18} />
-              &nbsp;Save Profile
-            </Button>
-          </Tooltip>
         </form>
 
         <Form
@@ -292,6 +291,18 @@ export default function Profile() {
         {portfolios.map((portfolio) => (
           <CustomBadge key={portfolio.id} data={portfolio} />
         ))}
+
+        <DropzoneButton
+          title="Upload Resume/Enter URL Above"
+          form={profileForm}
+          fieldName="resume"
+        />
+        <Tooltip label="Save Profile">
+          <Button form="profileForm" type="submit" mt="md">
+            <IconFileUpload size={18} />
+            &nbsp;Save Profile
+          </Button>
+        </Tooltip>
       </Grid.Col>
     </Grid>
   );
@@ -377,136 +388,3 @@ function CustomBadge({
     </Badge>
   );
 }
-
-// export function DropzoneButton({ resumeProps, resumeFileProps, form }: any) {
-//   const { classes } = useStyles();
-//   // const openRef = useRef<() => void>(null);
-
-//   return (
-//     <div className={classes.wrapper}>
-//       <TextInput
-//         label="Resume"
-//         placeholder="Enter your Resume url"
-//         mt="md"
-//         name="resume"
-//         readOnly
-//         variant="filled"
-//         {...resumeProps}
-//       />
-//       {/* Will add support for this as remix support file upload clear */}
-//       {/* <Dropzone
-//         openRef={openRef}
-//         onDrop={(files) => {
-//           const [resumeFile] = files;
-//           console.log(resumeFile);
-//           form.setFieldValue("resume", resumeFile.name);
-//           form.setFieldValue("resumeFile", resumeFile);
-//         }}
-//         name="resumeFile"
-//         className={classes.dropzone}
-//         radius="md"
-//         mt="md"
-//         accept={[MIME_TYPES.pdf]}
-//         maxSize={5 * 1024 ** 2}
-//         {...resumeFileProps}
-//       >
-//         <div style={{ pointerEvents: "none" }}>
-//           <Group position="center">
-//             <Dropzone.Accept>
-//               <IconDownload
-//                 size={rem(50)}
-//                 color={theme.colors[theme.primaryColor][6]}
-//                 stroke={1.5}
-//               />
-//             </Dropzone.Accept>
-//             <Dropzone.Reject>
-//               <IconX size={rem(50)} color={theme.colors.red[6]} stroke={1.5} />
-//             </Dropzone.Reject>
-//             <Dropzone.Idle>
-//               <IconCloudUpload
-//                 size={rem(50)}
-//                 color={
-//                   theme.colorScheme === "dark"
-//                     ? theme.colors.dark[0]
-//                     : theme.black
-//                 }
-//                 stroke={1.5}
-//               />
-//             </Dropzone.Idle>
-//           </Group>
-
-//           <Text ta="center" fw={700} fz="lg" mt="xl">
-//             <Dropzone.Accept>Drop files here</Dropzone.Accept>
-//             <Dropzone.Reject>Pdf file less than 5mb</Dropzone.Reject>
-//             <Dropzone.Idle>Upload Resume/ Enter URL Above</Dropzone.Idle>
-//           </Text>
-//           <Text ta="center" fz="sm" mt="xs" c="dimmed">
-//             Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
-//             <i>.pdf</i> files that are less than 2mb in size.
-//           </Text>
-//         </div>
-//       </Dropzone>
-
-//       <Button
-//         className={classes.control}
-//         size="md"
-//         onClick={() => openRef.current?.()}
-//       >
-//         Select files
-//       </Button> */}
-//     </div>
-//   );
-// }
-
-// export function TypeInput({ name }) {
-//   const data = Object.keys(LinkType);
-
-//   const [selected, setSelected] = useState(data[0]);
-//   const items = data.map((item) => (
-//     <Menu.Item onClick={() => setSelected(item)} key={item}>
-//       {item}
-//     </Menu.Item>
-//   ));
-
-//   return (
-//     <Menu radius="md" withinPortal>
-//       <Menu.Target>
-//         <Button>
-//           <span>{selected}</span> &nbsp;
-//           <IconChevronDown size="1rem" stroke={1.5} />
-//         </Button>
-//       </Menu.Target>
-//       <Menu.Dropdown>{items}</Menu.Dropdown>
-//     </Menu>
-//   );
-// }
-
-// export function LinkInput({
-//   placeholder,
-//   label,
-//   onPress,
-// }: {
-//   placeholder: string;
-//   label: string;
-//   onPress: any;
-// }) {
-//   const { classes } = useStyles();
-
-//   return (
-//     <div className={classes.linksContainer}>
-//       <TextInput
-//         className={classes.linksInput}
-//         placeholder={placeholder}
-//         label={label}
-//         mt="md"
-//         variant="filled"
-//         rightSection={<TypeInput />}
-//         rightSectionWidth={92}
-//       />
-
-//       <Button onClick={onPress}>
-//         <IconPlus size={16} /> Add
-//       </Button>
-//     </div>
-//   );
-// }

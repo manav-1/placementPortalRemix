@@ -112,6 +112,11 @@ const useStyles = createStyles((theme) => ({
       marginTop: theme.spacing.xs,
     },
   },
+  profileLink: {
+    color: theme.colorScheme === "dark" ? theme.colors.blue[0] : theme.black,
+    textDecoration: "none",
+    fontWeight: 700,
+  },
 }));
 
 const data = [
@@ -217,7 +222,11 @@ export default function Footer() {
       </Container>
       <Container className={classes.afterFooter}>
         <Text color="dimmed" size="sm">
-          © 2020 mantine.dev. All rights reserved.
+          © 2023{" "}
+          <a className={classes.profileLink} href="https://github.com/manav-1">
+            Manav Arora
+          </a>
+          . All rights reserved.
         </Text>
 
         <Group spacing={0} className={classes.social} position="right" noWrap>

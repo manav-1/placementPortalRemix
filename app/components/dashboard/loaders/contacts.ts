@@ -3,7 +3,7 @@ import { json, type LoaderFunction } from "@remix-run/node";
 import { prisma } from "prisma/prisma.server";
 import { getUserPermissions } from "~/utils/auth/auth.server";
 
-export const contactsLoader: LoaderFunction = async ({ request, params }) => {
+export const contactsLoader: LoaderFunction = async ({ request }) => {
   try {
     const user = await getUserPermissions(request, [
       UserRole.SUPER_ADMIN,
