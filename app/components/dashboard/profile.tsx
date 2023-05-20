@@ -28,6 +28,7 @@ import { LinkType } from '@prisma/client';
 import { type FormEvent } from 'react';
 import { PortfolioSchema, ProjectSchema } from '~/utils/user/types';
 import DropzoneButton from './dropzone-button';
+import TextWithDropzone from './text-with-dropzone';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
@@ -217,7 +218,7 @@ export default function Profile() {
             variant="filled"
             {...profileForm.getInputProps('marksPost')}
           />
-          <TextInput
+          <TextWithDropzone
             label="Resume URL"
             placeholder="Enter your Resume url"
             mt="md"

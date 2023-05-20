@@ -14,13 +14,13 @@ export const UploadAction: ActionFunction = async ({ request }) => {
   if (!fileType) throw new Error('File type is required');
 
   const uploadHandler = unstable_composeUploadHandlers(
-    async (data) => s3UploaderHandler(data, fileType, user.id),
+    async (data) => s3UploaderHandler(data, fileType, `${user.id}`),
     unstable_createMemoryUploadHandler(),
   );
 
-  await unstable_parseMultipartFormData(request, uploadHandler);
+  const data = await unstable_parseMultipartFormData(request, uploadHandler);
 
-  const url = await getObjectURL(fileType, user.id);
+  const url = await getObjectURL(data.get('file') as string);
   return {
     url,
   };

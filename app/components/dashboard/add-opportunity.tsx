@@ -16,6 +16,7 @@ import { useLoaderData, useSubmit } from '@remix-run/react';
 import { OpportunityType, type Stream } from '@prisma/client';
 import type { FormEvent } from 'react';
 import { AddOpportunitySchema } from '~/utils/admin/types';
+import TextWithDropzone from './text-with-dropzone';
 
 export default function AddOpportunity() {
   const { streams } = useLoaderData<{
@@ -57,7 +58,7 @@ export default function AddOpportunity() {
       <Grid.Col lg={10} xl={5} md={12} sm={12}>
         <form method="POST" onSubmit={(e) => checkFormValidity(form, e)}>
           <Title order={2} size="h1" mb="md" weight={900}>
-            New Opportunity
+            Add Opportunity
           </Title>
           <TextInput
             label="Position"
@@ -127,7 +128,7 @@ export default function AddOpportunity() {
             {...form.getInputProps('url')}
           />
 
-          <TextInput
+          <TextWithDropzone
             label="Image"
             placeholder="Company Logo/Image URL"
             name="companyImage"
@@ -144,7 +145,7 @@ export default function AddOpportunity() {
             variant="filled"
             {...form.getInputProps('linkedin')}
           />
-          <TextInput
+          <TextWithDropzone
             label="Job Description"
             placeholder="Enter Job Description URL"
             mt="md"
@@ -152,6 +153,7 @@ export default function AddOpportunity() {
             variant="filled"
             {...form.getInputProps('jobDesc')}
           />
+
           <Checkbox
             mt="md"
             label="Is this job currently active?"
