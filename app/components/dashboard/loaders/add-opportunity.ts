@@ -1,7 +1,7 @@
-import { UserRole } from "@prisma/client";
-import { json, type LoaderFunction } from "@remix-run/node";
-import { prisma } from "prisma/prisma.server";
-import { getUserPermissions } from "~/utils/auth/auth.server";
+import { UserRole } from '@prisma/client';
+import { json, type LoaderFunction } from '@remix-run/node';
+import { prisma } from 'prisma/prisma.server';
+import { getUserPermissions } from '~/utils/auth/auth.server';
 
 export const StreamsLoader: LoaderFunction = async ({ request }) => {
   await getUserPermissions(request, [

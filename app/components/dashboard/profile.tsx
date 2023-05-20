@@ -7,8 +7,10 @@ import {
   Select,
   Badge,
   ActionIcon,
-} from "@mantine/core";
-import { isNotEmpty, useForm, zodResolver } from "@mantine/form";
+  createStyles,
+  rem,
+} from '@mantine/core';
+import { isNotEmpty, useForm, zodResolver } from '@mantine/form';
 import {
   IconBrandBehance,
   IconBrandGithub,
@@ -19,18 +21,17 @@ import {
   IconLink,
   IconPlus,
   IconX,
-} from "@tabler/icons-react";
-import { createStyles, rem } from "@mantine/core";
-import { Form, Link, useLoaderData, useSubmit } from "@remix-run/react";
-import type { Project, Stream, UserProfile, Portfolio } from "@prisma/client";
-import { LinkType } from "@prisma/client";
-import { type FormEvent } from "react";
-import { PortfolioSchema, ProjectSchema } from "~/utils/user/types";
-import { DropzoneButton } from "./dropzone-button";
+} from '@tabler/icons-react';
+import { Form, Link, useLoaderData, useSubmit } from '@remix-run/react';
+import type { Project, Stream, UserProfile, Portfolio } from '@prisma/client';
+import { LinkType } from '@prisma/client';
+import { type FormEvent } from 'react';
+import { PortfolioSchema, ProjectSchema } from '~/utils/user/types';
+import DropzoneButton from './dropzone-button';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    position: "relative",
+    position: 'relative',
     marginBottom: theme.spacing.md,
   },
 
@@ -41,33 +42,33 @@ const useStyles = createStyles((theme) => ({
 
   icon: {
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[3]
         : theme.colors.gray[4],
   },
 
   control: {
-    position: "absolute",
+    position: 'absolute',
     width: rem(250),
     left: `calc(50% - ${rem(125)})`,
     bottom: rem(-10),
   },
 
   linksContainer: {
-    width: "100%",
-    display: "flex",
-    alignItems: "flex-end",
+    width: '100%',
+    display: 'flex',
+    alignItems: 'flex-end',
 
-    [theme.fn.smallerThan("sm")]: {
-      flexDirection: "column",
-      alignItems: "flex-start",
+    [theme.fn.smallerThan('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
     },
   },
   linksInput: {
     flex: 1,
     marginRight: theme.spacing.md,
-    [theme.fn.smallerThan("sm")]: {
-      width: "100%",
+    [theme.fn.smallerThan('sm')]: {
+      width: '100%',
     },
   },
 }));
@@ -104,11 +105,11 @@ export default function Profile() {
       resume: userProfile?.resume,
     },
     validate: {
-      firstName: isNotEmpty("First Name is required"),
-      lastName: isNotEmpty("Last Name is required"),
-      streamId: isNotEmpty("Stream is required"),
-      marks10: isNotEmpty("10th Marks is required"),
-      marks12: isNotEmpty("12th Marks is required"),
+      firstName: isNotEmpty('First Name is required'),
+      lastName: isNotEmpty('Last Name is required'),
+      streamId: isNotEmpty('Stream is required'),
+      marks10: isNotEmpty('10th Marks is required'),
+      marks12: isNotEmpty('12th Marks is required'),
     },
   });
 
@@ -116,8 +117,8 @@ export default function Profile() {
 
   const projectForm = useForm({
     initialValues: {
-      projectName: "",
-      projectURL: "",
+      projectName: '',
+      projectURL: '',
       projectType: projectTypes[0],
     },
     validate: zodResolver(ProjectSchema),
@@ -125,7 +126,7 @@ export default function Profile() {
   });
   const portfolioForm = useForm({
     initialValues: {
-      portfolioURL: "",
+      portfolioURL: '',
       portfolioType: projectTypes[0],
     },
     validate: zodResolver(PortfolioSchema),
@@ -159,7 +160,7 @@ export default function Profile() {
             name="firstName"
             mt="md"
             variant="filled"
-            {...profileForm.getInputProps("firstName")}
+            {...profileForm.getInputProps('firstName')}
           />
           <TextInput
             label="Last Name"
@@ -167,7 +168,7 @@ export default function Profile() {
             name="lastName"
             mt="md"
             variant="filled"
-            {...profileForm.getInputProps("lastName")}
+            {...profileForm.getInputProps('lastName')}
           />
 
           <Select
@@ -181,7 +182,7 @@ export default function Profile() {
             placeholder="Pick your stream"
             label="Stream"
             variant="filled"
-            {...profileForm.getInputProps("streamId")}
+            {...profileForm.getInputProps('streamId')}
           />
 
           <TextInput
@@ -190,7 +191,7 @@ export default function Profile() {
             name="marks10"
             mt="md"
             variant="filled"
-            {...profileForm.getInputProps("marks10")}
+            {...profileForm.getInputProps('marks10')}
           />
           <TextInput
             label="12th Marks"
@@ -198,7 +199,7 @@ export default function Profile() {
             name="marks12"
             mt="md"
             variant="filled"
-            {...profileForm.getInputProps("marks12")}
+            {...profileForm.getInputProps('marks12')}
           />
           <TextInput
             label="Marks in Graduation/ CGPA"
@@ -206,7 +207,7 @@ export default function Profile() {
             name="marksGrad"
             mt="md"
             variant="filled"
-            {...profileForm.getInputProps("marksGrad")}
+            {...profileForm.getInputProps('marksGrad')}
           />
           <TextInput
             label="Marks in Post Graduation"
@@ -214,7 +215,7 @@ export default function Profile() {
             name="marksPost"
             mt="md"
             variant="filled"
-            {...profileForm.getInputProps("marksPost")}
+            {...profileForm.getInputProps('marksPost')}
           />
           <TextInput
             label="Resume URL"
@@ -222,7 +223,7 @@ export default function Profile() {
             mt="md"
             name="resume"
             variant="filled"
-            {...profileForm.getInputProps("resume")}
+            {...profileForm.getInputProps('resume')}
           />
         </form>
 
@@ -234,27 +235,27 @@ export default function Profile() {
           <div className={classes.linksContainer}>
             <TextInput
               className={classes.linksInput}
-              placeholder={"Enter the name"}
-              label={"Project Name"}
+              placeholder="Enter the name"
+              label="Project Name"
               name="projectName"
               mt="md"
               variant="filled"
-              {...projectForm.getInputProps("projectName")}
+              {...projectForm.getInputProps('projectName')}
             />
             <TextInput
               className={classes.linksInput}
-              placeholder={"Enter the url"}
-              label={"Project Links"}
+              placeholder="Enter the url"
+              label="Project Links"
               name="projectURL"
               mt="md"
               variant="filled"
-              {...projectForm.getInputProps("projectURL")}
+              {...projectForm.getInputProps('projectURL')}
             />
             <TypeInput
               name="projectType"
               label="Project Type"
               data={projectTypes}
-              formProps={projectForm.getInputProps("projectType")}
+              formProps={projectForm.getInputProps('projectType')}
             />
           </div>
         </Form>
@@ -273,18 +274,18 @@ export default function Profile() {
           <div className={classes.linksContainer}>
             <TextInput
               className={classes.linksInput}
-              placeholder={"Enter the url"}
-              label={"Portfolio Link"}
+              placeholder="Enter the url"
+              label="Portfolio Link"
               name="portfolioURL"
               mt="md"
               variant="filled"
-              {...portfolioForm.getInputProps("portfolioURL")}
+              {...portfolioForm.getInputProps('portfolioURL')}
             />
             <TypeInput
               name="portfolioType"
               label="Portfolio Type"
               data={projectTypes}
-              formProps={portfolioForm.getInputProps("portfolioType")}
+              formProps={portfolioForm.getInputProps('portfolioType')}
             />
           </div>
         </Form>
@@ -296,6 +297,7 @@ export default function Profile() {
           title="Upload Resume/Enter URL Above"
           form={profileForm}
           fieldName="resume"
+          warningText="Remember to save your profile after uploading the resume"
         />
         <Tooltip label="Save Profile">
           <Button form="profileForm" type="submit" mt="md">
@@ -337,12 +339,12 @@ function TypeInput({
   );
 }
 
-const RemoveButton = ({ id, type }: { id: string; type: string }) => {
+function RemoveButton({ id, type }: { id: string; type: string }) {
   const submit = useSubmit();
   return (
     <ActionIcon
       onClick={() => {
-        submit(null, { action: `/user/${type}/${id}`, method: "DELETE" });
+        submit(null, { action: `/user/${type}/${id}`, method: 'DELETE' });
       }}
       size="xs"
       color="blue"
@@ -352,7 +354,7 @@ const RemoveButton = ({ id, type }: { id: string; type: string }) => {
       <IconX size={rem(10)} />
     </ActionIcon>
   );
-};
+}
 
 function CustomBadge({
   data,
@@ -374,12 +376,12 @@ function CustomBadge({
       rightSection={
         <RemoveButton
           id={data.id}
-          type={data.name ? "projects" : "portfolio"}
+          type={data.name ? 'projects' : 'portfolio'}
         />
       }
     >
       <Link
-        style={{ textDecoration: "none", color: theme.colors.blue[9] }}
+        style={{ textDecoration: 'none', color: theme.colors.blue[9] }}
         to={data.url}
         target="_blank"
       >

@@ -1,7 +1,7 @@
-import Editor from "~/components/dashboard/editor.client";
-import { ClientOnly } from "remix-utils";
-import { Title } from "@mantine/core";
-import type { V2_MetaFunction } from "@remix-run/node";
+import Editor from '~/components/dashboard/editor.client';
+import { ClientOnly } from 'remix-utils';
+import { Title } from '@mantine/core';
+import type { V2_MetaFunction } from '@remix-run/node';
 
 export default function Emails() {
   return (
@@ -20,8 +20,8 @@ export default function Emails() {
 
 export const meta: V2_MetaFunction = () => [
   {
-    charset: "utf-8",
-    title: "Email Editor",
-    viewport: "width=device-width,initial-scale=1",
+    charset: 'utf-8',
+    title: 'Email Editor',
+    viewport: 'width=device-width,initial-scale=1',
   },
 ];

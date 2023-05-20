@@ -11,30 +11,30 @@ import {
   Table,
   Title,
   rem,
-} from "@mantine/core";
-import { useLoaderData, useSubmit } from "@remix-run/react";
-import { useState } from "react";
-import * as excelJs from "exceljs";
-import { type User } from "@prisma/client";
+} from '@mantine/core';
+import { useLoaderData, useSubmit } from '@remix-run/react';
+import { useState } from 'react';
+import * as excelJs from 'exceljs';
+import { type User } from '@prisma/client';
 import {
   IconCheck,
   IconDeviceFloppy,
   IconEdit,
   IconX,
-} from "@tabler/icons-react";
-import { useForm, zodResolver } from "@mantine/form";
-import { UpdateUserSchema } from "~/utils/admin/types";
+} from '@tabler/icons-react';
+import { useForm, zodResolver } from '@mantine/form';
+import { UpdateUserSchema } from '~/utils/admin/types';
 
 const useStyles = createStyles((theme) => ({
   table: {
-    "& th": {
+    '& th': {
       fontWeight: 600,
-      textAlign: "center",
-      color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+      textAlign: 'center',
+      color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
     },
-    "& td": {
+    '& td': {
       // textAlign: "center",
-      color: theme.colorScheme === "dark" ? theme.colors.dark[0] : theme.black,
+      color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
     },
   },
 }));
@@ -49,16 +49,16 @@ export default function Admin() {
 
   const handleReportGeneration = async () => {
     if (!selectedOpportunities || selectedOpportunities.length === 0) {
-      setReportError("Select opportunities first for generating report");
+      setReportError('Select opportunities first for generating report');
       return;
     }
     const data = await fetch(
-      `admin/opportunity/?selectedOpportunities=${selectedOpportunities}`
+      `admin/opportunity/?selectedOpportunities=${selectedOpportunities}`,
     );
-    const { opportunities } = await data.json();
-    console.log(opportunities);
+    const { opportunities: opportunitiesData } = await data.json();
+    console.log(opportunitiesData);
     const workbook = new excelJs.Workbook();
-    const worksheet = workbook.addWorksheet("Applicants");
+    const worksheet = workbook.addWorksheet('Applicants');
     worksheet.columns = [];
   };
 
@@ -73,14 +73,14 @@ export default function Admin() {
           <Title order={2} size="h2" mb="md" weight={600}>
             Generate Report
           </Title>
-          <Flex align={reportError ? "center" : "flex-end"}>
+          <Flex align={reportError ? 'center' : 'flex-end'}>
             <MultiSelect
               searchable
               clearable
               required
               error={reportError}
               placeholder="Select an opportunity to generate report"
-              nothingFound={"No opportunities found"}
+              nothingFound="No opportunities found"
               w={rem(500)}
               maxDropdownHeight={200}
               data={opportunities}
@@ -102,8 +102,8 @@ export default function Admin() {
 
           <Table
             className={classes.table}
-            verticalSpacing={"xs"}
-            horizontalSpacing={"sm"}
+            verticalSpacing="xs"
+            horizontalSpacing="sm"
             mah={600}
           >
             <thead>
@@ -126,7 +126,7 @@ export default function Admin() {
   );
 }
 
-const Row = ({ user }: { user: User }) => {
+function Row({ user }: { user: User }) {
   const [editable, setEditable] = useState(false);
   const submit = useSubmit();
   const userForm = useForm({
@@ -143,15 +143,15 @@ const Row = ({ user }: { user: User }) => {
   const handleUserUpdate = async () => {
     if (userForm.isValid()) {
       const formData = new FormData();
-      formData.append("name", userForm.values.name);
-      formData.append("mobile", userForm.values.mobile);
-      formData.append("email", userForm.values.email);
-      formData.append("role", userForm.values.role);
-      formData.append("isActive", userForm.values.isActive.toString());
-      formData.append("id", user.id);
+      formData.append('name', userForm.values.name);
+      formData.append('mobile', userForm.values.mobile);
+      formData.append('email', userForm.values.email);
+      formData.append('role', userForm.values.role);
+      formData.append('isActive', userForm.values.isActive.toString());
+      formData.append('id', user.id);
       submit(formData, {
-        method: "PUT",
-        action: "/dashboard/admin/user",
+        method: 'PUT',
+        action: '/dashboard/admin/user',
       });
       setEditable(false);
     }
@@ -177,43 +177,42 @@ const Row = ({ user }: { user: User }) => {
         </td>
       </tr>
     );
-  else
-    return (
-      <tr key={user.id}>
-        <td>
-          <Input name="name" {...userForm.getInputProps("name")} />
-        </td>
-        <td>
-          <Input name="mobile" {...userForm.getInputProps("mobile")} />
-        </td>
-        <td>
-          <Input name="email" {...userForm.getInputProps("email")} />
-        </td>
-        <td>
-          <Select
-            data={["ADMIN", "SUB_ADMIN", "USER"]}
-            name="role"
-            {...userForm.getInputProps("role")}
-          />
-        </td>
-        <td align="center">
-          <Checkbox
-            name="isActive"
-            checked={userForm.values.isActive}
-            {...userForm.getInputProps("isActive")}
-          />
-        </td>
-        <td>
-          <Button
-            w="100%"
-            variant="subtle"
-            form={user.id}
-            type="submit"
-            onClick={handleUserUpdate}
-          >
-            <IconDeviceFloppy />
-          </Button>
-        </td>
-      </tr>
-    );
-};
+  return (
+    <tr key={user.id}>
+      <td>
+        <Input name="name" {...userForm.getInputProps('name')} />
+      </td>
+      <td>
+        <Input name="mobile" {...userForm.getInputProps('mobile')} />
+      </td>
+      <td>
+        <Input name="email" {...userForm.getInputProps('email')} />
+      </td>
+      <td>
+        <Select
+          data={['ADMIN', 'SUB_ADMIN', 'USER']}
+          name="role"
+          {...userForm.getInputProps('role')}
+        />
+      </td>
+      <td align="center">
+        <Checkbox
+          name="isActive"
+          checked={userForm.values.isActive}
+          {...userForm.getInputProps('isActive')}
+        />
+      </td>
+      <td>
+        <Button
+          w="100%"
+          variant="subtle"
+          form={user.id}
+          type="submit"
+          onClick={handleUserUpdate}
+        >
+          <IconDeviceFloppy />
+        </Button>
+      </td>
+    </tr>
+  );
+}

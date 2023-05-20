@@ -1,5 +1,5 @@
-import { LinkType } from "@prisma/client";
-import { z } from "zod";
+import { LinkType } from '@prisma/client';
+import { z } from 'zod';
 
 export const UserProfileSchema = z.object({
   firstName: z.string(),

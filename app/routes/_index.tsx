@@ -5,13 +5,14 @@ import {
   Button,
   Container,
   rem,
+  Space,
 } from "@mantine/core";
 import { useContext } from "react";
 import { Dots } from "~/components/landing/dots";
 import FeaturesCards from "~/components/landing/features";
 import Footer from "~/components/landing/footer";
 import { Navbar } from "~/components/landing/navbar";
-import { SnackbarContext } from "~/components/landing/snackbar";
+
 const useStyles = createStyles((theme) => ({
   wrapper: {
     position: "relative",
@@ -106,8 +107,6 @@ const useStyles = createStyles((theme) => ({
 export default function Index() {
   const { classes } = useStyles();
 
-  const snackbarContext = useContext(SnackbarContext);
-
   return (
     <>
       <Navbar />
@@ -134,18 +133,23 @@ export default function Index() {
           </Container>
           <div className={classes.controls}>
             <Button
+              component="a"
+              href="https://calendly.com/manavarora/workhub"
               className={classes.control}
               size="lg"
               variant="default"
               color="gray"
-              onClick={() => {
-                snackbarContext.displayMsg("Hello wosdsfsdrld");
-              }}
             >
               Book a demo
             </Button>
-            <Button className={classes.control} size="lg">
-              Purchase a license
+            <Space w="md" />
+            <Button
+              component="a"
+              href="/dashboard"
+              className={classes.control}
+              size="lg"
+            >
+              Dashboard
             </Button>
           </div>
         </div>

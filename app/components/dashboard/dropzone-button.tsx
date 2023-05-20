@@ -6,14 +6,14 @@ import {
   Text,
   Flex,
   Space,
-} from "@mantine/core";
-import { Dropzone, MIME_TYPES } from "@mantine/dropzone";
-import { IconDownload, IconX, IconWorldUpload } from "@tabler/icons-react";
-import { useRef, useState } from "react";
+} from '@mantine/core';
+import { Dropzone, MIME_TYPES } from '@mantine/dropzone';
+import { IconDownload, IconX, IconWorldUpload } from '@tabler/icons-react';
+import { useRef, useState } from 'react';
 
 const useStyles = createStyles((theme) => ({
   wrapper: {
-    position: "relative",
+    position: 'relative',
     marginBottom: theme.spacing.md,
   },
 
@@ -23,37 +23,41 @@ const useStyles = createStyles((theme) => ({
 
   icon: {
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[3]
         : theme.colors.gray[4],
     marginBottom: theme.spacing.md,
   },
   control: {
-    alignSelf: "center",
+    alignSelf: 'center',
     // position: "absolute",
     // left: "50%",
     // transform: "translateX(-50%)",
   },
   dropzoneInside: {
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-    justifyContent: "center",
-    pointerEvents: "none",
-    width: "100%",
-    height: "100%",
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    pointerEvents: 'none',
+    width: '100%',
+    height: '100%',
   },
 }));
 
-export function DropzoneButton({
-  title,
-  form,
-  fieldName,
-}: {
+interface DropzoneProps {
   title: string;
   form: any;
   fieldName: string;
-}) {
+  warningText: string;
+}
+
+export default function DropzoneButton({
+  title,
+  form,
+  fieldName,
+  warningText,
+}: DropzoneProps) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { classes, theme } = useStyles();
@@ -63,21 +67,25 @@ export function DropzoneButton({
 
   return (
     <form
-      onSubmit={(e) => {
-        console.log(e.currentTarget);
-        console.log(e);
-        // e.preventDefault();
+      onSubmit={async (e) => {
+        e.preventDefault();
+        const data = await fetch('/user/upload?file-type=resume', {
+          method: 'POST',
+          body: new FormData(e.currentTarget),
+        });
+        const { url } = await data.json();
+        form.setFieldValue(fieldName, url);
       }}
       action="/user/upload?file-type=resume"
       method="POST"
       encType="multipart/form-data"
     >
-      <div className={classes.wrapper}>
+      <div className={classes.dropzone}>
         <Dropzone
           openRef={openRef}
           onDrop={handleFileUpload}
           name="resumeFile"
-          className={classes.dropzone}
+          className={classes.wrapper}
           radius="md"
           mt="md"
           accept={[MIME_TYPES.pdf]}
@@ -85,7 +93,7 @@ export function DropzoneButton({
         >
           <div
             className={classes.dropzoneInside}
-            style={{ pointerEvents: "none" }}
+            style={{ pointerEvents: 'none' }}
           >
             <Group position="center">
               <Dropzone.Accept>
@@ -109,7 +117,7 @@ export function DropzoneButton({
                   size={rem(50)}
                   className={classes.icon}
                   color={
-                    theme.colorScheme === "dark"
+                    theme.colorScheme === 'dark'
                       ? theme.colors.dark[0]
                       : theme.black
                   }
@@ -131,22 +139,27 @@ export function DropzoneButton({
             >
               Select file
             </Button>
-            <Text ta="center" fz="sm" mt="xs" c="dimmed">
-              Drag&apos;n&apos;drop files here to upload. We can accept only{" "}
+            <Text ta="center" fz="sm" fw="600" mt="xs">
+              Drag&apos;n&apos;drop files here to upload. We can accept only{' '}
               <i>.pdf</i> files that are less than 2mb in size.
             </Text>
-          </div>
-          <Flex justify={"space-between"} align="center">
-            {!selectedFile && <Space w="md" />}
-            {selectedFile && (
-              <Flex align={"center"}>
-                <Space w="md" />
-                <p>{selectedFile.name}</p>
-              </Flex>
+            {warningText && (
+              <Text ta="center" size="xs">
+                ** {warningText}
+              </Text>
             )}
-            <Button type="submit">Upload</Button>
-          </Flex>
+          </div>
         </Dropzone>
+        <Flex justify="space-between" align="center">
+          {!selectedFile && <Space w="md" />}
+          {selectedFile && (
+            <Flex align="center">
+              <Space w="md" />
+              <p>{selectedFile.name}</p>
+            </Flex>
+          )}
+          <Button type="submit">Upload</Button>
+        </Flex>
       </div>
     </form>
   );

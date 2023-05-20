@@ -1,4 +1,4 @@
-import { IconBrandLinkedin, IconLink } from "@tabler/icons-react";
+import { IconBrandLinkedin, IconLink } from '@tabler/icons-react';
 import {
   Card,
   Text,
@@ -13,42 +13,42 @@ import {
   Grid,
   Title,
   Flex,
-} from "@mantine/core";
-import { Link, useLoaderData } from "@remix-run/react";
-import PaginationWithSearch from "./paginate";
-import dayjs from "dayjs";
+} from '@mantine/core';
+import { Link, useLoaderData } from '@remix-run/react';
+import dayjs from 'dayjs';
+import PaginationWithSearch from './paginate';
 
 const useStyles = createStyles((theme) => ({
   card: {
-    position: "relative",
+    position: 'relative',
     backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+      theme.colorScheme === 'dark' ? theme.colors.dark[7] : theme.white,
   },
 
   rating: {
-    position: "absolute",
+    position: 'absolute',
     top: theme.spacing.xs,
-    width: "95%",
+    width: '95%',
   },
 
   title: {
-    display: "block",
+    display: 'block',
     marginTop: theme.spacing.md,
     marginBottom: rem(5),
   },
   linkIcon: {
-    ref: getStylesRef("icon"),
+    ref: getStylesRef('icon'),
     color:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[2]
         : theme.colors.gray[6],
 
-    "&, &:hover": {
-      color: theme.fn.variant({ variant: "light", color: theme.primaryColor })
+    '&, &:hover': {
+      color: theme.fn.variant({ variant: 'light', color: theme.primaryColor })
         .color,
-      [`& .${getStylesRef("icon")}`]: {
+      [`& .${getStylesRef('icon')}`]: {
         color: theme.fn.variant({
-          variant: "light",
+          variant: 'light',
           color: theme.primaryColor,
         }).color,
       },
@@ -56,12 +56,12 @@ const useStyles = createStyles((theme) => ({
   },
   action: {
     backgroundColor:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.colors.dark[6]
         : theme.colors.gray[0],
     ...theme.fn.hover({
       backgroundColor:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[5]
           : theme.colors.gray[1],
     }),
@@ -71,12 +71,12 @@ const useStyles = createStyles((theme) => ({
     marginTop: theme.spacing.md,
   },
   headerContainer: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    [theme.fn.smallerThan("md")]: {
-      justifyContent: "flex-start",
-      alignItems: "flex-start",
-      flexDirection: "column",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    [theme.fn.smallerThan('md')]: {
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      flexDirection: 'column',
     },
   },
 }));
@@ -95,11 +95,9 @@ interface OpportunityCardProps {
 }
 
 export function OpportunityCard({
-  className,
   opportunity,
   ...others
 }: {
-  className?: string;
   opportunity: OpportunityCardProps;
 }) {
   const { classes, cx } = useStyles();
@@ -108,15 +106,10 @@ export function OpportunityCard({
 
   return (
     <Grid.Col xs={12} md={6} lg={4} xl={3}>
-      <Card
-        withBorder
-        radius="md"
-        className={cx(classes.card, className)}
-        {...others}
-      >
-        <Group position="apart" align="center" mb={"sm"}>
+      <Card withBorder radius="md" className={cx(classes.card)} {...others}>
+        <Group position="apart" align="center" mb="sm">
           <Badge variant="light">
-            {dayjs(deadline).format("ddd, DD MMM YYYY, hh:mm A")}
+            {dayjs(deadline).format('ddd, DD MMM YYYY, hh:mm A')}
           </Badge>
           <Badge variant="light">{type}</Badge>
         </Group>
@@ -144,7 +137,7 @@ export function OpportunityCard({
               <Link target="_blank" to={url}>
                 <ActionIcon className={classes.action}>
                   <IconLink size="1rem" className={classes.linkIcon} />
-                </ActionIcon>{" "}
+                </ActionIcon>{' '}
               </Link>
             </Tooltip>
           </Group>
@@ -178,7 +171,7 @@ export default function Opportunities() {
       {appliedOpportunities.map(
         (item: { id: string; opportunity: OpportunityCardProps }) => (
           <OpportunityCard key={item.id} opportunity={item.opportunity} />
-        )
+        ),
       )}
     </Grid>
   );

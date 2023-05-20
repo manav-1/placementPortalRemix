@@ -8,8 +8,8 @@ import {
   SimpleGrid,
   rem,
   Anchor,
-} from "@mantine/core";
-import image from "~/../assets/404.svg";
+} from '@mantine/core';
+import image from '~/../assets/404.svg';
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -22,26 +22,26 @@ const useStyles = createStyles((theme) => ({
     fontSize: rem(34),
     marginBottom: theme.spacing.md,
 
-    [theme.fn.smallerThan("sm")]: {
+    [theme.fn.smallerThan('sm')]: {
       fontSize: rem(32),
     },
   },
 
   control: {
-    [theme.fn.smallerThan("sm")]: {
-      width: "100%",
+    [theme.fn.smallerThan('sm')]: {
+      width: '100%',
     },
   },
 
   mobileImage: {
-    [theme.fn.largerThan("sm")]: {
-      display: "none",
+    [theme.fn.largerThan('sm')]: {
+      display: 'none',
     },
   },
 
   desktopImage: {
-    [theme.fn.smallerThan("sm")]: {
-      display: "none",
+    [theme.fn.smallerThan('sm')]: {
+      display: 'none',
     },
   },
 }));
@@ -54,7 +54,7 @@ export default function NotFoundImage() {
       <SimpleGrid
         spacing={80}
         cols={2}
-        breakpoints={[{ maxWidth: "sm", cols: 1, spacing: 40 }]}
+        breakpoints={[{ maxWidth: 'sm', cols: 1, spacing: 40 }]}
       >
         <Image src={image} className={classes.mobileImage} />
         <div>

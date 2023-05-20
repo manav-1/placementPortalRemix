@@ -1,8 +1,8 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import { useRouteError } from "@remix-run/react";
-import AppliedOpportunities from "~/components/dashboard/applied-opportunities";
-import { AppliedOpportunityLoader } from "~/components/dashboard/loaders/applied-opportunities";
-import { ErrorPage } from "~/components/error";
+import type { V2_MetaFunction } from '@remix-run/node';
+import { useRouteError } from '@remix-run/react';
+import AppliedOpportunities from '~/components/dashboard/applied-opportunities';
+import { AppliedOpportunityLoader } from '~/components/dashboard/loaders/applied-opportunities';
+import { ErrorPage } from '~/components/error';
 
 export default function AddOpportunity() {
   return <AppliedOpportunities />;
@@ -10,9 +10,9 @@ export default function AddOpportunity() {
 
 export const meta: V2_MetaFunction = () => [
   {
-    charset: "utf-8",
-    title: "Application Tracker",
-    viewport: "width=device-width,initial-scale=1",
+    charset: 'utf-8',
+    title: 'Application Tracker',
+    viewport: 'width=device-width,initial-scale=1',
   },
 ];
 

@@ -1,7 +1,7 @@
-import { Group, Pagination, TextInput } from "@mantine/core";
-import { useLocation, useNavigate } from "@remix-run/react";
-import type { SetStateAction } from "react";
-import { useState } from "react";
+import { Group, Pagination, TextInput } from '@mantine/core';
+import { useLocation, useNavigate } from '@remix-run/react';
+import type { SetStateAction } from 'react';
+import { useState } from 'react';
 
 export type PaginationProps = {
   pagination: {
@@ -15,10 +15,10 @@ export default function PaginationWithSearch({
 }: PaginationProps) {
   const navigate = useNavigate();
   const locaton = useLocation();
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
 
-  const onPageChange = (page: number) => {
-    navigate(`${locaton.pathname}?page=${page}&search=${search}`);
+  const onPageChange = (pageNumber: number) => {
+    navigate(`${locaton.pathname}?page=${pageNumber}&search=${search}`);
   };
   const onSearchChange = (e: { target: { value: SetStateAction<string> } }) => {
     setSearch(e.target.value);

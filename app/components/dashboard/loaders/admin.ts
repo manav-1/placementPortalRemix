@@ -1,9 +1,9 @@
-import type { Opportunity } from "@prisma/client";
-import { UserRole } from "@prisma/client";
-import { json, type LoaderFunction } from "@remix-run/node";
-import dayjs from "dayjs";
-import { prisma } from "prisma/prisma.server";
-import { getUserPermissions } from "~/utils/auth/auth.server";
+import type { Opportunity } from '@prisma/client';
+import { UserRole } from '@prisma/client';
+import { json, type LoaderFunction } from '@remix-run/node';
+import dayjs from 'dayjs';
+import { prisma } from 'prisma/prisma.server';
+import { getUserPermissions } from '~/utils/auth/auth.server';
 
 export const AdminLoader: LoaderFunction = async ({ request }) => {
   await getUserPermissions(request, [
@@ -24,7 +24,7 @@ export const AdminLoader: LoaderFunction = async ({ request }) => {
       value: opportunity.id,
       group: opportunity.company,
       label: `${opportunity.name} - ${dayjs(opportunity.deadline).format(
-        "DD MMM YYYY"
+        'DD MMM YYYY',
       )}`,
     })),
     users,
@@ -42,12 +42,12 @@ export const AdminOpportunityLoader: LoaderFunction = async ({
   ]);
   const currentURL = new URL(request.url);
   const selectedOpportunities = currentURL.searchParams
-    .get("selectedOpportunities")
-    ?.split(",");
+    .get('selectedOpportunities')
+    ?.split(',');
   if (!selectedOpportunities || selectedOpportunities.length === 0)
-    throw new Response("No Opportunities", {
+    throw new Response('No Opportunities', {
       status: 418,
-      statusText: "No opportunities selected",
+      statusText: 'No opportunities selected',
     });
 
   const opportunities = await prisma.opportunityUserLink.findMany({

@@ -1,3 +1,3 @@
 export const theme = {
-  fontFamily: "Nunito Sans, MonoLisa",
+  fontFamily: 'Nunito Sans, MonoLisa',
 };

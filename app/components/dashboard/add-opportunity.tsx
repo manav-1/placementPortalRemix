@@ -8,14 +8,14 @@ import {
   MultiSelect,
   Checkbox,
   Select,
-} from "@mantine/core";
-import { DatePickerInput } from "@mantine/dates";
-import { useForm, zodResolver } from "@mantine/form";
-import { IconPlus } from "@tabler/icons-react";
-import { useLoaderData, useSubmit } from "@remix-run/react";
-import { OpportunityType, type Stream } from "@prisma/client";
-import type { FormEvent } from "react";
-import { AddOpportunitySchema } from "~/utils/admin/types";
+} from '@mantine/core';
+import { DatePickerInput } from '@mantine/dates';
+import { useForm, zodResolver } from '@mantine/form';
+import { IconPlus } from '@tabler/icons-react';
+import { useLoaderData, useSubmit } from '@remix-run/react';
+import { OpportunityType, type Stream } from '@prisma/client';
+import type { FormEvent } from 'react';
+import { AddOpportunitySchema } from '~/utils/admin/types';
 
 export default function AddOpportunity() {
   const { streams } = useLoaderData<{
@@ -23,15 +23,15 @@ export default function AddOpportunity() {
   }>();
   const form = useForm({
     initialValues: {
-      name: "",
-      company: "",
-      description: "",
-      url: "",
-      companyImage: "",
-      linkedin: "",
-      jobDesc: "",
+      name: '',
+      company: '',
+      description: '',
+      url: '',
+      companyImage: '',
+      linkedin: '',
+      jobDesc: '',
       deadline: new Date(),
-      type: "",
+      type: '',
       streams: [],
       isActive: false,
     },
@@ -40,11 +40,13 @@ export default function AddOpportunity() {
 
   const submit = useSubmit();
 
-  const checkFormValidity = (form: any, event: FormEvent<HTMLFormElement>) => {
+  const checkFormValidity = (
+    formHook: any,
+    event: FormEvent<HTMLFormElement>,
+  ) => {
     event.preventDefault();
-    form.validate();
-    console.log(form.values);
-    if (form.isValid()) {
+    formHook.validate();
+    if (formHook.isValid()) {
       submit(event.currentTarget);
       event.currentTarget.reset();
     }
@@ -63,7 +65,7 @@ export default function AddOpportunity() {
             name="name"
             mt="md"
             variant="filled"
-            {...form.getInputProps("name")}
+            {...form.getInputProps('name')}
           />
           <TextInput
             label="Company"
@@ -71,7 +73,7 @@ export default function AddOpportunity() {
             name="company"
             mt="md"
             variant="filled"
-            {...form.getInputProps("company")}
+            {...form.getInputProps('company')}
           />
           <DatePickerInput
             mt="md"
@@ -81,7 +83,7 @@ export default function AddOpportunity() {
             placeholder="Deadline"
             variant="filled"
             clearable={false}
-            {...form.getInputProps("deadline")}
+            {...form.getInputProps('deadline')}
           />
           <Textarea
             label="Description"
@@ -91,7 +93,7 @@ export default function AddOpportunity() {
             variant="filled"
             autosize
             minRows={5}
-            {...form.getInputProps("description")}
+            {...form.getInputProps('description')}
           />
           <MultiSelect
             mt="md"
@@ -104,7 +106,7 @@ export default function AddOpportunity() {
             placeholder="Pick streams that can apply for opportunity"
             label="Stream"
             variant="filled"
-            {...form.getInputProps("streams")}
+            {...form.getInputProps('streams')}
           />
           <Select
             mt="md"
@@ -114,7 +116,7 @@ export default function AddOpportunity() {
             placeholder="Select the type of opportunity"
             label="Opportunity Type"
             variant="filled"
-            {...form.getInputProps("type")}
+            {...form.getInputProps('type')}
           />
           <TextInput
             label="Website"
@@ -122,7 +124,7 @@ export default function AddOpportunity() {
             name="url"
             mt="md"
             variant="filled"
-            {...form.getInputProps("url")}
+            {...form.getInputProps('url')}
           />
 
           <TextInput
@@ -131,7 +133,7 @@ export default function AddOpportunity() {
             name="companyImage"
             mt="md"
             variant="filled"
-            {...form.getInputProps("companyImage")}
+            {...form.getInputProps('companyImage')}
           />
 
           <TextInput
@@ -140,7 +142,7 @@ export default function AddOpportunity() {
             mt="md"
             name="linkedin"
             variant="filled"
-            {...form.getInputProps("linkedin")}
+            {...form.getInputProps('linkedin')}
           />
           <TextInput
             label="Job Description"
@@ -148,13 +150,13 @@ export default function AddOpportunity() {
             mt="md"
             name="jobDesc"
             variant="filled"
-            {...form.getInputProps("jobDesc")}
+            {...form.getInputProps('jobDesc')}
           />
           <Checkbox
             mt="md"
             label="Is this job currently active?"
             name="isActive"
-            {...form.getInputProps("isActive")}
+            {...form.getInputProps('isActive')}
           />
           {/* <DropzoneButton formProps={form.getInputProps("description")} /> */}
 

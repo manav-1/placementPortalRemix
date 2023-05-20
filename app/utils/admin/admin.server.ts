@@ -1,6 +1,6 @@
-import { prisma } from "prisma/prisma.server";
-import type { AddOpportunityType, ContactType, UpdateUserType } from "./types";
-import { json } from "@remix-run/node";
+import { prisma } from 'prisma/prisma.server';
+import { json } from '@remix-run/node';
+import type { AddOpportunityType, ContactType, UpdateUserType } from './types';
 
 export const createContact = async (contactData: ContactType) => {
   const contact = await prisma.hRContact.create({ data: contactData });
@@ -9,7 +9,7 @@ export const createContact = async (contactData: ContactType) => {
 
 export const createOpportunity = async (
   opportunityData: AddOpportunityType,
-  addedById: string
+  addedById: string,
 ) => {
   const opportunityD = { ...opportunityData, streams: undefined };
   const opportunity = await prisma.opportunity.create({

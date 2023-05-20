@@ -1,7 +1,7 @@
-import * as jwt from "jsonwebtoken";
+import * as jwt from 'jsonwebtoken';
 
 export function createJWTSignedToken(data: any, key = process.env.SECRET_KEY!) {
-  const config = { expiresIn: "5d" };
+  const config = { expiresIn: '5d' };
   return jwt.sign(data, key, config);
 }
 

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   createStyles,
   Table,
@@ -13,35 +13,35 @@ import {
   TextInput,
   Flex,
   Tooltip,
-} from "@mantine/core";
+} from '@mantine/core';
 import {
   IconAddressBook,
   IconBrandTelegram,
   IconTrash,
-} from "@tabler/icons-react";
-import { useForm, zodResolver } from "@mantine/form";
-import { useActionData, useLoaderData, useSubmit } from "@remix-run/react";
-import { ContactSchema } from "~/utils/admin/types";
-import PaginationWithSearch from "./paginate";
+} from '@tabler/icons-react';
+import { useForm, zodResolver } from '@mantine/form';
+import { useActionData, useLoaderData, useSubmit } from '@remix-run/react';
+import { ContactSchema } from '~/utils/admin/types';
+import PaginationWithSearch from './paginate';
 
 const useStyles = createStyles((theme) => ({
   rowSelected: {
     backgroundColor:
-      theme.colorScheme === "dark"
+      theme.colorScheme === 'dark'
         ? theme.fn.rgba(theme.colors[theme.primaryColor][7], 0.2)
         : theme.colors[theme.primaryColor][0],
   },
   th: {
-    padding: "0 !important",
+    padding: '0 !important',
   },
 
   control: {
-    width: "100%",
+    width: '100%',
     padding: `${theme.spacing.xs} ${theme.spacing.md}`,
 
-    "&:hover": {
+    '&:hover': {
       backgroundColor:
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[6]
           : theme.colors.gray[0],
     },
@@ -54,16 +54,16 @@ const useStyles = createStyles((theme) => ({
   },
 
   inputRow: {
-    backgroundColor: "red",
+    backgroundColor: 'red',
     margin: `${theme.spacing.md}`,
   },
   headerContainer: {
-    justifyContent: "space-between",
-    alignItems: "center",
-    [theme.fn.smallerThan("md")]: {
-      justifyContent: "flex-start",
-      alignItems: "flex-start",
-      flexDirection: "column",
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    [theme.fn.smallerThan('md')]: {
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      flexDirection: 'column',
     },
   },
 }));
@@ -115,15 +115,15 @@ export default function Contacts() {
   const { classes, cx } = useStyles();
   const [selection, setSelection] = useState<string[]>([]);
 
-  const toggleRow = (id: string) =>
+  const toggleRow = (rowId: string) =>
     setSelection((current) =>
-      current.includes(id)
-        ? current.filter((item) => item !== id)
-        : [...current, id]
+      current.includes(rowId)
+        ? current.filter((item) => item !== rowId)
+        : [...current, rowId],
     );
   const toggleAll = () =>
     setSelection((current) =>
-      current.length === contacts.length ? [] : contacts.map((item) => item.id)
+      current.length === contacts.length ? [] : contacts.map((item) => item.id),
     );
 
   const rows = contacts.map((item: any) => {
@@ -152,7 +152,7 @@ export default function Contacts() {
 
         <td>
           <Flex>
-            <Button variant="subtle" mr={"sm"}>
+            <Button variant="subtle" mr="sm">
               <Tooltip label="Send Mail">
                 <IconBrandTelegram size={18} />
               </Tooltip>
@@ -170,11 +170,11 @@ export default function Contacts() {
 
   const contactForm = useForm({
     initialValues: {
-      name: "",
-      email: "",
-      mobile: "",
-      position: "",
-      company: "",
+      name: '',
+      email: '',
+      mobile: '',
+      position: '',
+      company: '',
       addedById: id,
     },
     validate: zodResolver(ContactSchema),
@@ -185,13 +185,13 @@ export default function Contacts() {
     contactForm.validate();
     if (contactForm.isValid()) {
       const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("email", values.email);
-      formData.append("mobile", values.mobile);
-      formData.append("position", values.position);
-      formData.append("company", values.company);
+      formData.append('name', values.name);
+      formData.append('email', values.email);
+      formData.append('mobile', values.mobile);
+      formData.append('position', values.position);
+      formData.append('company', values.company);
       submit(formData, {
-        method: "POST",
+        method: 'POST',
       });
     }
   };
@@ -233,31 +233,31 @@ export default function Contacts() {
             <td>
               <TextInput
                 placeholder="Enter Company Name"
-                {...contactForm.getInputProps("company")}
+                {...contactForm.getInputProps('company')}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter Name"
-                {...contactForm.getInputProps("name")}
+                {...contactForm.getInputProps('name')}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter email"
-                {...contactForm.getInputProps("email")}
+                {...contactForm.getInputProps('email')}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter mobile"
-                {...contactForm.getInputProps("mobile")}
+                {...contactForm.getInputProps('mobile')}
               />
             </td>
             <td>
               <TextInput
                 placeholder="Enter position"
-                {...contactForm.getInputProps("position")}
+                {...contactForm.getInputProps('position')}
               />
             </td>
             <td>{name}</td>

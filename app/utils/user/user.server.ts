@@ -1,6 +1,6 @@
-import { prisma } from "prisma/prisma.server";
-import type { UserProfile } from "./types";
-import type { LinkType, Prisma } from "@prisma/client";
+import { prisma } from 'prisma/prisma.server';
+import type { LinkType, Prisma } from '@prisma/client';
+import type { UserProfile } from './types';
 
 export const createUserProfile = async (userProfile: UserProfile) => {
   const { userId, streamId, ...rest } = userProfile;

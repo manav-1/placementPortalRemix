@@ -1,6 +1,6 @@
-import { json, type LoaderFunction } from "@remix-run/node";
-import { prisma } from "prisma/prisma.server";
-import { getUserPermissions } from "~/utils/auth/auth.server";
+import { json, type LoaderFunction } from '@remix-run/node';
+import { prisma } from 'prisma/prisma.server';
+import { getUserPermissions } from '~/utils/auth/auth.server';
 
 export const OpportunityIdLoader: LoaderFunction = async ({
   request,
@@ -14,21 +14,18 @@ export const OpportunityIdLoader: LoaderFunction = async ({
     },
   });
   if (!userProfile)
-    throw new Response("Not Found", {
+    throw new Response('Not Found', {
       status: 404,
       statusText:
-        "No profile found for this user, Please visit profile section to update profile and see opportunitites",
+        'No profile found for this user, Please visit profile section to update profile and see opportunitites',
     });
 
   if (!userProfile?.streamId)
-    throw new Response("Not Found", {
+    throw new Response('Not Found', {
       status: 404,
       statusText:
-        "No stream found for this user, Please visit profile section to update profile and see opportunitites",
+        'No stream found for this user, Please visit profile section to update profile and see opportunitites',
     });
-
-  console.log(userProfile.streamId);
-  console.log(opportunityId);
 
   const opportunity = await prisma.opportunity.findFirst({
     where: {
@@ -40,12 +37,6 @@ export const OpportunityIdLoader: LoaderFunction = async ({
       },
     },
   });
-
-  console.log({
-    opportunity,
-    userProfile,
-  });
-
   return json({
     opportunity,
     userProfile,

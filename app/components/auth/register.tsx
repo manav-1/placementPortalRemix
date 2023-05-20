@@ -9,9 +9,9 @@ import {
   Container,
   Group,
   Button,
-} from "@mantine/core";
-import { Navbar } from "../landing/navbar";
-import { Form } from "@remix-run/react";
+} from '@mantine/core';
+import { Form } from '@remix-run/react';
+import { Navbar } from '../landing/navbar';
 
 export default function Signup() {
   return (
@@ -22,7 +22,7 @@ export default function Signup() {
           Create your Account
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>
-          Already have an account?{" "}
+          Already have an account?{' '}
           <Anchor size="sm" href="/login">
             Login
           </Anchor>
@@ -59,8 +59,8 @@ export default function Signup() {
             />
             <Group position="left" mt="lg">
               <Checkbox />
-              <Text size={"sm"}>
-                You agree to our{" "}
+              <Text size="sm">
+                You agree to our{' '}
                 <Anchor component="button" size="sm">
                   Terms and Conditions
                 </Anchor>

@@ -1,8 +1,8 @@
-import { useRouteError } from "@remix-run/react";
-import Opportunities from "~/components/dashboard/opportunity";
-import { ErrorPage } from "~/components/error";
-import { OpportunityLoader } from "~/components/dashboard/loaders/opportunities";
-import type { V2_MetaFunction } from "@remix-run/node";
+import { useRouteError } from '@remix-run/react';
+import Opportunities from '~/components/dashboard/opportunity';
+import { ErrorPage } from '~/components/error';
+import { OpportunityLoader } from '~/components/dashboard/loaders/opportunities';
+import type { V2_MetaFunction } from '@remix-run/node';
 
 export default function DashboardOpportunities() {
   return <Opportunities />;
@@ -17,8 +17,8 @@ export function ErrorBoundary() {
 
 export const meta: V2_MetaFunction = () => [
   {
-    charset: "utf-8",
-    title: "Opportunities",
-    viewport: "width=device-width,initial-scale=1",
+    charset: 'utf-8',
+    title: 'Opportunities',
+    viewport: 'width=device-width,initial-scale=1',
   },
 ];

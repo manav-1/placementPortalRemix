@@ -1,9 +1,9 @@
-import type { V2_MetaFunction } from "@remix-run/node";
-import { useRouteError } from "@remix-run/react";
-import Contacts from "~/components/dashboard/contacts";
-import { contactsLoader } from "~/components/dashboard/loaders/contacts";
-import { ErrorPage } from "~/components/error";
-import { ContactAction } from "~/utils/admin/actions.server";
+import type { V2_MetaFunction } from '@remix-run/node';
+import { useRouteError } from '@remix-run/react';
+import Contacts from '~/components/dashboard/contacts';
+import { contactsLoader } from '~/components/dashboard/loaders/contacts';
+import { ErrorPage } from '~/components/error';
+import { ContactAction } from '~/utils/admin/actions.server';
 
 export default function DashboardContacts() {
   return <Contacts />;
@@ -11,9 +11,9 @@ export default function DashboardContacts() {
 
 export const meta: V2_MetaFunction = () => [
   {
-    charset: "utf-8",
-    title: "Contacts",
-    viewport: "width=device-width,initial-scale=1",
+    charset: 'utf-8',
+    title: 'Contacts',
+    viewport: 'width=device-width,initial-scale=1',
   },
 ];
 

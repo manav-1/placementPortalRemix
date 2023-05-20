@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState } from 'react';
 import {
   TextInput,
   PasswordInput,
@@ -10,14 +10,14 @@ import {
   Container,
   Group,
   Button,
-} from "@mantine/core";
-import { Navbar } from "../landing/navbar";
-import { Form } from "@remix-run/react";
+} from '@mantine/core';
+import { Form } from '@remix-run/react';
+import { Navbar } from '../landing/navbar';
 
 export default function Login() {
   const [user, setUser] = useState({
-    email: "",
-    password: "",
+    email: '',
+    password: '',
   });
 
   return (
@@ -28,7 +28,7 @@ export default function Login() {
           Welcome back!
         </Title>
         <Text color="dimmed" size="sm" align="center" mt={5}>
-          Do not have an account yet?{" "}
+          Do not have an account yet?{' '}
           <Anchor size="sm" href="/register">
             Create account
           </Anchor>
