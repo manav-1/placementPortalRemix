@@ -66,7 +66,9 @@ export function SnackBarContextProvider({
       closeHandler();
     }, 3000); // close snackbar after 3 seconds
   }, []);
-
+  const closeHandler = () => {
+    setIsDisplayed(false);
+  };
   const providerValue = useMemo(
     () => ({
       msg,
@@ -77,9 +79,6 @@ export function SnackBarContextProvider({
     [msg, isDisplayed, displayHandler],
   );
 
-  const closeHandler = () => {
-    setIsDisplayed(false);
-  };
   return (
     <SnackbarContext.Provider value={providerValue}>
       {children}
