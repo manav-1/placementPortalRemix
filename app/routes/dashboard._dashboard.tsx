@@ -23,10 +23,16 @@ import {
   IconClipboardText,
   IconUserBolt,
 } from '@tabler/icons-react';
-import { Outlet, useLoaderData, useLocation } from '@remix-run/react';
+import {
+  Outlet,
+  useLoaderData,
+  useLocation,
+  useRouteError,
+} from '@remix-run/react';
 import type { UserRole } from '@prisma/client';
 import Logo from '~/components/landing/logo';
 import { dashboardLoader } from '~/components/dashboard/loaders/dashboard';
+import { ErrorPage } from '~/components/error';
 import user from '../../assets/user.png';
 
 const useStyles = createStyles((theme) => ({
@@ -101,7 +107,7 @@ const USER_ROLES = Object.freeze({
   SUPER_ADMIN: 'SUPER_ADMIN',
 });
 
-const data = [
+const sidebar = [
   {
     link: 'opportunities',
     label: 'Opportunities',
@@ -218,7 +224,7 @@ export default function DashboardLayout() {
 }
 
 function DashNavbar({
-  opened: [opened, setOpened],
+  opened: [opened],
   role,
 }: {
   opened: [boolean, (openedVal: boolean) => void];
@@ -227,7 +233,7 @@ function DashNavbar({
   const { classes, cx } = useStyles();
   const location = useLocation();
 
-  const links = data
+  const links = sidebar
     .filter((item) => item.roles.includes(role))
     .map((item) => (
       <a
@@ -260,4 +266,9 @@ function DashNavbar({
       </Navbar.Section>{' '}
     </Navbar>
   );
+}
+
+export function ErrorBoundary() {
+  const { status, statusText, data } = useRouteError() as any;
+  return <ErrorPage statusCode={status} message={statusText} name={data} />;
 }

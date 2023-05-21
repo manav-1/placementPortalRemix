@@ -1,22 +1,15 @@
 import Editor from '~/components/dashboard/editor.client';
 import { ClientOnly } from 'remix-utils';
-import { Title } from '@mantine/core';
 import type { V2_MetaFunction } from '@remix-run/node';
+import { EditorLoader } from '~/components/dashboard/loaders/editor';
+import { ErrorPage } from '~/components/error';
+import { useRouteError } from '@remix-run/react';
 
 export default function Emails() {
-  return (
-    <ClientOnly fallback={null}>
-      {() => (
-        <div className="App">
-          <Title order={2} size="h1" mb="md" weight={900}>
-            Email Template Editor
-          </Title>
-          <Editor />
-        </div>
-      )}
-    </ClientOnly>
-  );
+  return <ClientOnly fallback={null}>{() => <Editor />}</ClientOnly>;
 }
+
+export const loader = EditorLoader;
 
 export const meta: V2_MetaFunction = () => [
   {
@@ -25,3 +18,8 @@ export const meta: V2_MetaFunction = () => [
     viewport: 'width=device-width,initial-scale=1',
   },
 ];
+
+export function ErrorBoundary() {
+  const { status, statusText, data } = useRouteError() as any;
+  return <ErrorPage statusCode={status} message={statusText} name={data} />;
+}

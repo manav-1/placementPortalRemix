@@ -28,26 +28,28 @@ async function convertToBuffer(a: AsyncIterable<Uint8Array>) {
 }
 
 export const getObjectURL = async (key: string) =>
-  `https://d21irt8vy9p0p5.cloudfront.net/${key}`;
+  `${process.env.CLOUDFRONT_URL}/${key}`;
 
-const uploadStreamToS3 = async (
+export const uploadToS3 = async (
   {
     data,
     filename,
     contentType,
   }: {
-    data: AsyncIterable<Uint8Array>;
+    data: any;
     filename: string;
     contentType: string;
   },
   folderName: string,
-  userId: string,
+  userId?: string,
 ) => {
-  const Key = `${process.env.COLLEGE_SCHEMA}/${folderName}/${userId} - ${filename}`;
+  let Key = `${process.env.COLLEGE_SCHEMA}/${folderName}`;
+  if (userId) Key += `/${userId} - ${filename}`;
+  else Key += `/${filename}`;
   const params: PutObjectCommandInput = {
     Bucket: bucketName,
     Key,
-    Body: await convertToBuffer(data),
+    Body: data,
     ContentType: contentType,
   };
 
@@ -60,8 +62,8 @@ export const s3UploaderHandler = async (
   fileType: string,
   userId: string,
 ) =>
-  uploadStreamToS3(
-    { data, filename: filename!, contentType },
+  uploadToS3(
+    { data: convertToBuffer(data), filename: filename!, contentType },
     fileType,
     userId,
   );
