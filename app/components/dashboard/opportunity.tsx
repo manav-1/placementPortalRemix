@@ -145,6 +145,8 @@ export function OpportunityCard({
     if (data.ok) {
       displayMsg('Application submitted successfully');
       revalidator.revalidate();
+    } else {
+      displayMsg('Application submission failed');
     }
   };
 

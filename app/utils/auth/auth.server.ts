@@ -139,7 +139,7 @@ export async function getUser(request: Request) {
     if (!user) return logout(request);
     return user;
   } catch {
-    return logout(request);
+    throw logout(request);
   }
 }
 

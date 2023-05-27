@@ -3,11 +3,11 @@ import type { PutObjectCommandInput } from '@aws-sdk/client-s3';
 import { PutObjectCommand, S3 } from '@aws-sdk/client-s3';
 
 const s3Client = new S3({
-  region: process.env.S3_REGION,
+  region: process.env.AWSREGION,
   forcePathStyle: true,
   credentials: {
-    accessKeyId: process.env.S3_KEY!,
-    secretAccessKey: process.env.S3_SECRET!,
+    accessKeyId: process.env.AWSKEY!,
+    secretAccessKey: process.env.AWSSECRET!,
   },
 });
 

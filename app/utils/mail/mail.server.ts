@@ -1,19 +1,25 @@
 import nodemailer from 'nodemailer';
 import type { MailOptions } from 'nodemailer/lib/json-transport';
+import * as aws from '@aws-sdk/client-ses';
 
-const host = process.env.SMTP_HOST;
-const port = process.env.SMTP_PORT;
-const user = process.env.SMTP_USER;
-const pass = process.env.SMTP_PASS;
+const user = process.env.AWSKEY;
+const pass = process.env.AWSSECRET;
+
+const ses = new aws.SES({
+  apiVersion: '2010-12-01',
+  region: 'ap-south-1',
+
+  credentials: {
+    accessKeyId: user!,
+    secretAccessKey: pass!,
+  },
+});
 
 const transporter = nodemailer.createTransport({
-  port: Number(port),
-  host,
-  auth: {
-    user,
-    pass,
+  SES: {
+    ses,
+    aws,
   },
-  secure: true,
 });
 
 export const sendmail = (data: MailOptions) =>
@@ -28,3 +34,6 @@ export const sendmail = (data: MailOptions) =>
   });
 
 export default transporter;
+
+export const loadTemplate = async (url: string) =>
+  fetch(url).then((resp) => resp.text());
