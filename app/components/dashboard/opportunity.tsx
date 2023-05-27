@@ -18,13 +18,14 @@ import {
 import {
   Link,
   useLoaderData,
-  useLocation,
   useNavigation,
-  useSubmit,
+  useRevalidator,
 } from '@remix-run/react';
 import dayjs from 'dayjs';
+import { useContext } from 'react';
 import companyPlaceholder from '../../../assets/company-placeholder.png';
 import PaginationWithSearch from './paginate';
+import { SnackbarContext } from '../landing/snackbar';
 
 const useStyles = createStyles((theme) => ({
   card: {
@@ -108,8 +109,6 @@ export function OpportunityCard({
 }: {
   opportunity: OpportunityCardProps;
 }) {
-  const submit = useSubmit();
-  const location = useLocation();
   const navigation = useNavigation();
 
   const { classes, cx } = useStyles();
@@ -132,11 +131,21 @@ export function OpportunityCard({
     rel: 'noopener noreferrer',
   };
 
+  const { displayMsg } = useContext(SnackbarContext);
+  const revalidator = useRevalidator();
+
   const handleApplyForOpportunity = async (opportunityId: string) => {
-    submit(null, {
+    const data = await fetch(`opportunities/${opportunityId}`, {
       method: 'POST',
-      action: `${location.pathname}/${opportunityId}`,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({}),
     });
+    if (data.ok) {
+      displayMsg('Application submitted successfully');
+      revalidator.revalidate();
+    }
   };
 
   return (

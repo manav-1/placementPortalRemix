@@ -1,8 +1,10 @@
-import { type LoaderFunction } from '@remix-run/node';
-import { getUser, getUserPermissions } from '~/utils/auth/auth.server';
+import { redirect, type LoaderFunction } from '@remix-run/node';
+import { getUser } from '~/utils/auth/auth.server';
 
 export const dashboardLoader: LoaderFunction = async ({ request }) => {
-  await getUserPermissions(request);
   const user = await getUser(request);
+  if (!user) {
+    return redirect('/login');
+  }
   return user;
 };

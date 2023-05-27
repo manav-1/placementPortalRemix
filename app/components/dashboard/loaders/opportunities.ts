@@ -75,7 +75,7 @@ export const OpportunityLoader: LoaderFunction = async ({ request }) => {
   });
   if (!opportunities || opportunities.length === 0) {
     throw new Response('No Opportunities', {
-      status: 418,
+      status: 204,
       statusText:
         'No opportunities to apply currently, Looks like you are all set',
     });

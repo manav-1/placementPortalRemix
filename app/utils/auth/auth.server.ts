@@ -136,9 +136,10 @@ export async function getUser(request: Request) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
     });
+    if (!user) return logout(request);
     return user;
   } catch {
-    throw logout(request);
+    return logout(request);
   }
 }
 

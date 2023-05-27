@@ -17,10 +17,11 @@ export const ApplyForOpportunity: ActionFunction = async ({
     await applyForOpportunity(userId, opportunityId);
     return redirect('/dashboard/opportunities');
   } catch (e) {
-    throw new Response('Something went Wrong', {
-      status: 500,
-      statusText:
-        'Please try again later or check if you have already applied for this opportunity',
-    });
+    throw new Response(
+      'Please try again later or check if you have already applied for this opportunity',
+      {
+        status: 500,
+      },
+    );
   }
 };

@@ -59,3 +59,5 @@ export const UploadTemplateAction: ActionFunction = async ({ request }) => {
     url,
   };
 };
+
+export const SendEmail: ActionFunction = ({ request }) => {};
