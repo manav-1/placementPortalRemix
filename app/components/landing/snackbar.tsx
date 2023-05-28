@@ -9,7 +9,7 @@ const useStyles = createStyles((theme) => ({
     right: 10,
     backgroundColor:
       theme.colorScheme === 'dark' ? theme.black : theme.colors.blue,
-    color: theme.black,
+    color: theme.white,
     padding: theme.spacing.md,
     display: 'flex',
     alignItems: 'center',

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import {
   createStyles,
   Table,
@@ -14,15 +14,12 @@ import {
   Flex,
   Tooltip,
 } from '@mantine/core';
-import {
-  IconAddressBook,
-  IconBrandTelegram,
-  IconTrash,
-} from '@tabler/icons-react';
+import { IconAddressBook, IconTrash } from '@tabler/icons-react';
 import { useForm, zodResolver } from '@mantine/form';
-import { useActionData, useLoaderData, useSubmit } from '@remix-run/react';
+import { useActionData, useLoaderData, useRevalidator } from '@remix-run/react';
 import { ContactSchema } from '~/utils/admin/types';
 import PaginationWithSearch from './paginate';
+import { SnackbarContext } from '../landing/snackbar';
 
 const useStyles = createStyles((theme) => ({
   rowSelected: {
@@ -97,9 +94,7 @@ function Th({ children }: ThProps) {
 }
 
 export default function Contacts() {
-  const submit = useSubmit();
-
-  const { id, name, contacts, pagination } = useLoaderData<{
+  const { contacts, pagination } = useLoaderData<{
     id: string;
     name: string;
     contacts: RowData[];
@@ -112,7 +107,7 @@ export default function Contacts() {
   const actionData = useActionData();
   if (actionData?.contact) contacts.push(actionData.contact);
 
-  const { classes, cx } = useStyles();
+  const { classes } = useStyles();
   const [selection, setSelection] = useState<string[]>([]);
 
   const toggleRow = (rowId: string) =>
@@ -126,75 +121,14 @@ export default function Contacts() {
       current.length === contacts.length ? [] : contacts.map((item) => item.id),
     );
 
-  const rows = contacts.map((item: any) => {
-    const selected = selection.includes(item.id);
-    return (
-      <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
-        <td>
-          <Checkbox
-            checked={selected}
-            onChange={() => toggleRow(item.id)}
-            transitionDuration={0}
-          />
-        </td>
-        <td>{item.company}</td>
-        <td>
-          <Group spacing="sm">
-            <Text size="sm" weight={500}>
-              {item.name}
-            </Text>
-          </Group>
-        </td>
-        <td>{item.email}</td>
-        <td>{item.mobile}</td>
-        <td>{item.position}</td>
-        <td>{item.addedBy}</td>
-
-        <td>
-          <Flex>
-            <Button variant="subtle" mr="sm">
-              <Tooltip label="Send Mail">
-                <IconBrandTelegram size={18} />
-              </Tooltip>
-            </Button>
-            <Button variant="subtle">
-              <Tooltip label="Delete Contact">
-                <IconTrash size={18} />
-              </Tooltip>
-            </Button>
-          </Flex>
-        </td>
-      </tr>
-    );
-  });
-
-  const contactForm = useForm({
-    initialValues: {
-      name: '',
-      email: '',
-      mobile: '',
-      position: '',
-      company: '',
-      addedById: id,
-    },
-    validate: zodResolver(ContactSchema),
-  });
-
-  const handleContactAdd = async () => {
-    const { values } = contactForm;
-    contactForm.validate();
-    if (contactForm.isValid()) {
-      const formData = new FormData();
-      formData.append('name', values.name);
-      formData.append('email', values.email);
-      formData.append('mobile', values.mobile);
-      formData.append('position', values.position);
-      formData.append('company', values.company);
-      submit(formData, {
-        method: 'POST',
-      });
-    }
-  };
+  const rows = contacts.map((item: any) => (
+    <ContactRow
+      item={item}
+      toggleRow={toggleRow}
+      key={item.id}
+      selection={selection}
+    />
+  ));
 
   return (
     <ScrollArea>
@@ -228,48 +162,164 @@ export default function Contacts() {
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <td />
-            <td>
-              <TextInput
-                placeholder="Enter Company Name"
-                {...contactForm.getInputProps('company')}
-              />
-            </td>
-            <td>
-              <TextInput
-                placeholder="Enter Name"
-                {...contactForm.getInputProps('name')}
-              />
-            </td>
-            <td>
-              <TextInput
-                placeholder="Enter email"
-                {...contactForm.getInputProps('email')}
-              />
-            </td>
-            <td>
-              <TextInput
-                placeholder="Enter mobile"
-                {...contactForm.getInputProps('mobile')}
-              />
-            </td>
-            <td>
-              <TextInput
-                placeholder="Enter position"
-                {...contactForm.getInputProps('position')}
-              />
-            </td>
-            <td>{name}</td>
-            <td>
-              <Button onClick={handleContactAdd}>
-                <IconAddressBook /> Add
-              </Button>
-            </td>
-          </tr>
+          <EditableRow />
           {rows}
         </tbody>
       </Table>
     </ScrollArea>
+  );
+}
+
+function EditableRow({ initialData }: { initialData?: RowData }) {
+  const { id, name } = useLoaderData<{ id: string; name: string }>();
+  const { displayMsg } = useContext(SnackbarContext);
+  const revalidator = useRevalidator();
+
+  const handleContactAdd = async () => {
+    const { values } = contactForm;
+    contactForm.validate();
+    if (contactForm.isValid()) {
+      const formData = new FormData();
+      formData.append('name', values.name);
+      formData.append('email', values.email);
+      formData.append('mobile', values.mobile);
+      formData.append('position', values.position);
+      formData.append('company', values.company);
+      if (initialData?.id) formData.append('id', initialData.id);
+      const contactAdd = await fetch('', {
+        method: initialData?.id ? 'PUT' : 'POST',
+        body: formData,
+      });
+      if (contactAdd.ok) {
+        revalidator.revalidate();
+        displayMsg('Contact Added Successfully');
+      } else if (contactAdd.status === 409)
+        displayMsg('Contact Already Exists');
+      else displayMsg('Something went wrong');
+      contactForm.reset();
+    }
+  };
+
+  const initialValues = {
+    id: initialData?.id || '',
+    name: initialData?.name || '',
+    email: initialData?.email || '',
+    mobile: initialData?.mobile || '',
+    position: initialData?.position || '',
+    company: initialData?.company || '',
+    addedById: id,
+  };
+
+  const contactForm = useForm({
+    initialValues,
+    validate: zodResolver(ContactSchema),
+  });
+  return (
+    <tr>
+      <td />
+      <td>
+        <TextInput
+          placeholder="Enter Company Name"
+          {...contactForm.getInputProps('company')}
+        />
+      </td>
+      <td>
+        <TextInput
+          placeholder="Enter Name"
+          {...contactForm.getInputProps('name')}
+        />
+      </td>
+      <td>
+        <TextInput
+          placeholder="Enter email"
+          {...contactForm.getInputProps('email')}
+        />
+      </td>
+      <td>
+        <TextInput
+          placeholder="Enter mobile"
+          {...contactForm.getInputProps('mobile')}
+        />
+      </td>
+      <td>
+        <TextInput
+          placeholder="Enter position"
+          {...contactForm.getInputProps('position')}
+        />
+      </td>
+      <td>{name}</td>
+      <td>
+        <Button onClick={handleContactAdd}>
+          <IconAddressBook /> Add
+        </Button>
+      </td>
+    </tr>
+  );
+}
+
+function ContactRow({
+  selection,
+  toggleRow,
+  item,
+}: {
+  selection: string[];
+  toggleRow: (id: string) => void;
+  item: any;
+}) {
+  const { classes, cx } = useStyles();
+  const selected = selection.includes(item.id);
+  const revalidator = useRevalidator();
+  const { displayMsg } = useContext(SnackbarContext);
+
+  const handleContactDelete = async (contactId: string) => {
+    const data = await fetch(`/admin/contacts/${contactId}`, {
+      method: 'DELETE',
+    });
+    if (data.ok) displayMsg('Contact Deleted Successfully');
+    else displayMsg('Something went wrong');
+
+    revalidator.revalidate();
+  };
+  return (
+    <tr key={item.id} className={cx({ [classes.rowSelected]: selected })}>
+      <td>
+        <Checkbox
+          checked={selected}
+          onChange={() => toggleRow(item.id)}
+          transitionDuration={0}
+        />
+      </td>
+      <td>{item.company}</td>
+      <td>
+        <Group spacing="sm">
+          <Text size="sm" weight={500}>
+            {item.name}
+          </Text>
+        </Group>
+      </td>
+      <td>{item.email}</td>
+      <td>{item.mobile}</td>
+      <td>{item.position}</td>
+      <td>{item?.addedBy?.name}</td>
+
+      <td>
+        <Flex>
+          {/* <Button
+            onClick={() => setEditable(!editable)}
+            variant="subtle"
+            mr="sm"
+          >
+            <Tooltip label="Edit Contact">
+              <IconEdit size={18} />
+            </Tooltip>
+          </Button> */}
+          <Button onClick={() => handleContactDelete(item.id)} variant="subtle">
+            <Tooltip label="Delete Contact">
+              <IconTrash size={18} />
+            </Tooltip>
+          </Button>
+        </Flex>
+      </td>
+    </tr>
   );
 }

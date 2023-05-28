@@ -21,7 +21,6 @@ export const loader = contactsLoader;
 export const action = ContactAction;
 
 export function ErrorBoundary() {
-  console.log(useRouteError());
   const { status, statusText, data } = useRouteError() as any;
   return <ErrorPage statusCode={status} message={statusText} name={data} />;
 }

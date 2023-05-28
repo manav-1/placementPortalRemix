@@ -27,7 +27,6 @@ import type { Project, Stream, UserProfile, Portfolio } from '@prisma/client';
 import { LinkType } from '@prisma/client';
 import { type FormEvent } from 'react';
 import { PortfolioSchema, ProjectSchema } from '~/utils/user/types';
-import DropzoneButton from './dropzone-button';
 import TextWithDropzone from './text-with-dropzone';
 
 const useStyles = createStyles((theme) => ({
@@ -294,12 +293,6 @@ export default function Profile() {
           <CustomBadge key={portfolio.id} data={portfolio} />
         ))}
 
-        <DropzoneButton
-          title="Upload Resume/Enter URL Above"
-          form={profileForm}
-          fieldName="resume"
-          warningText="Remember to save your profile after uploading the resume"
-        />
         <Tooltip label="Save Profile">
           <Button form="profileForm" type="submit" mt="md">
             <IconFileUpload size={18} />

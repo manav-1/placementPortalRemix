@@ -54,9 +54,10 @@ export const AppliedOpportunityLoader: LoaderFunction = async ({ request }) => {
     ],
   };
 
-  const totalPages = await prisma.opportunityUserLink.count({
-    where: { opportunity: whereCondition },
+  const totalCount = await prisma.opportunityUserLink.count({
+    where: { userId, opportunity: whereCondition },
   });
+  const totalPages = Math.ceil(totalCount / perPage);
 
   const appliedOpportunities = await prisma.opportunityUserLink.findMany({
     skip: offset,

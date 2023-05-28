@@ -30,7 +30,7 @@ export const applyForOpportunity = async (
   }
 
   const data = await loadTemplate(
-    'https://d21irt8vy9p0p5.cloudfront.net/mail-templates/opportunity/index.html',
+    'https://d21irt8vy9p0p5.cloudfront.net/keshav-mahavidayalaya/mail-templates/opportunity/index.html',
   );
   const template = Handlebars.compile(data);
   const htmlData = template({

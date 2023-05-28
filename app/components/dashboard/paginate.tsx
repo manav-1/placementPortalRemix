@@ -1,7 +1,7 @@
 import { Group, Pagination, TextInput } from '@mantine/core';
+import { useDebouncedValue } from '@mantine/hooks';
 import { useLocation, useNavigate } from '@remix-run/react';
-import type { SetStateAction } from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 export type PaginationProps = {
   pagination: {
@@ -16,20 +16,20 @@ export default function PaginationWithSearch({
   const navigate = useNavigate();
   const locaton = useLocation();
   const [search, setSearch] = useState('');
-
+  const [debounced] = useDebouncedValue(search, 500);
   const onPageChange = (pageNumber: number) => {
     navigate(`${locaton.pathname}?page=${pageNumber}&search=${search}`);
   };
-  const onSearchChange = (e: { target: { value: SetStateAction<string> } }) => {
-    setSearch(e.target.value);
-    navigate(`${locaton.pathname}?page=${page}&search=${e.target.value}`);
+  const onSearchChange = () => {
+    navigate(`${locaton.pathname}?page=${page}&search=${debounced}`);
   };
+  useEffect(onSearchChange, [debounced, locaton.pathname, navigate, page]);
   return (
     <Group>
       <Pagination value={page} total={totalPages} onChange={onPageChange} />
       <TextInput
         value={search}
-        onChange={onSearchChange}
+        onChange={(e) => setSearch(e.target.value)}
         placeholder="Search"
         variant="filled"
         size="sm"

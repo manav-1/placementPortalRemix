@@ -63,7 +63,7 @@ export const s3UploaderHandler = async (
   userId: string,
 ) =>
   uploadToS3(
-    { data: convertToBuffer(data), filename: filename!, contentType },
+    { data: await convertToBuffer(data), filename: filename!, contentType },
     fileType,
     userId,
   );

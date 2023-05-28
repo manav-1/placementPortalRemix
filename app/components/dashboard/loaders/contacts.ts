@@ -34,6 +34,13 @@ export const contactsLoader: LoaderFunction = async ({ request }) => {
           },
         ],
       },
+      include: {
+        addedBy: {
+          select: {
+            name: true,
+          },
+        },
+      },
     });
     return json({
       ...user,

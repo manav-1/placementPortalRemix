@@ -3,7 +3,13 @@ import type { OpportunityType } from '@prisma/client';
 import { UserRole } from '@prisma/client';
 import { getUserPermissions } from '../auth/auth.server';
 import { AddOpportunitySchema, ContactSchema, UpdateUserSchema } from './types';
-import { createContact, createOpportunity, updateUser } from './admin.server';
+import {
+  createContact,
+  createOpportunity,
+  deleteContact,
+  sendEmailToContact,
+  updateUser,
+} from './admin.server';
 
 export const ContactAction: ActionFunction = async ({ request }) => {
   try {
@@ -31,10 +37,9 @@ export const ContactAction: ActionFunction = async ({ request }) => {
     ContactSchema.parse(contactData);
     const contact = await createContact(contactData);
     return contact;
-    // return { contact };
   } catch (e: any) {
     if (e.code === 'P2002')
-      throw new Response('Contact already exists', {
+      return new Response('Contact already exists', {
         status: 409,
       });
     throw new Response('Something went wrong', {
@@ -122,4 +127,27 @@ export const UpdateUserAction: ActionFunction = async ({ request }) => {
     return redirect('/dashboard/admin/');
   }
   throw new Response('Method not allowed', { status: 405 });
+};
+
+export const ContactEmailAction: ActionFunction = async ({
+  request,
+  params,
+}) => {
+  const { id } = await getUserPermissions(request, [
+    UserRole.SUPER_ADMIN,
+    UserRole.ADMIN,
+    UserRole.SUB_ADMIN,
+  ]);
+  const { contactId } = params;
+  const { searchParams } = new URL(request.url);
+  const templateId = searchParams.get('templateId');
+  const subject = searchParams.get('subject');
+  if (!contactId) throw new Response('Contact Id is required', { status: 400 });
+  if (request.method === 'DELETE') await deleteContact(contactId, id);
+  else if (request.method === 'POST') {
+    if (!templateId || !subject)
+      throw new Response('Proper params not sent', { status: 400 });
+    await sendEmailToContact(contactId, templateId, subject);
+  } else throw new Response('Method not allowed', { status: 405 });
+  return redirect('/dashboard/admin/');
 };
