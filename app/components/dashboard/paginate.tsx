@@ -1,4 +1,4 @@
-import { Group, Pagination, TextInput } from '@mantine/core';
+import { Group, Pagination, TextInput, rem } from '@mantine/core';
 import { useDebouncedValue } from '@mantine/hooks';
 import { useLocation, useNavigate } from '@remix-run/react';
 import { useEffect, useState } from 'react';
@@ -28,6 +28,7 @@ export default function PaginationWithSearch({
     <Group>
       <Pagination value={page} total={totalPages} onChange={onPageChange} />
       <TextInput
+        w={rem(300)}
         value={search}
         onChange={(e) => setSearch(e.target.value)}
         placeholder="Search"

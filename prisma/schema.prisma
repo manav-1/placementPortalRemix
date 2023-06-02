@@ -37,6 +37,7 @@ model UserProfile {
   marksGrad Int?
   marksPost Int?
   resume    String?
+  linkedin  String?
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
   projects  Project[]

@@ -13,10 +13,12 @@ import {
   TextInput,
   Flex,
   Tooltip,
+  Select,
+  Space,
 } from '@mantine/core';
 import { IconAddressBook, IconTrash } from '@tabler/icons-react';
 import { useForm, zodResolver } from '@mantine/form';
-import { useActionData, useLoaderData, useRevalidator } from '@remix-run/react';
+import { useLoaderData, useRevalidator } from '@remix-run/react';
 import { ContactSchema } from '~/utils/admin/types';
 import PaginationWithSearch from './paginate';
 import { SnackbarContext } from '../landing/snackbar';
@@ -94,21 +96,30 @@ function Th({ children }: ThProps) {
 }
 
 export default function Contacts() {
-  const { contacts, pagination } = useLoaderData<{
-    id: string;
-    name: string;
+  const {
+    contacts,
+    pagination,
+    templates,
+  }: {
     contacts: RowData[];
+    templates: {
+      value: string;
+      id: string;
+    }[];
     pagination: {
       page: number;
       totalPages: number;
     };
-  }>();
-
-  const actionData = useActionData();
-  if (actionData?.contact) contacts.push(actionData.contact);
+  } = useLoaderData();
 
   const { classes } = useStyles();
   const [selection, setSelection] = useState<string[]>([]);
+  const [templateId, setTemplateId] = useState<string | null>();
+  const [subject, setSubject] = useState<string | undefined>(
+    'Invitation for Placement Season 2023-24',
+  );
+
+  const { displayMsg } = useContext(SnackbarContext);
 
   const toggleRow = (rowId: string) =>
     setSelection((current) =>
@@ -130,6 +141,42 @@ export default function Contacts() {
     />
   ));
 
+  const handleSendEmail = async () => {
+    if (!templateId) {
+      displayMsg('Please select a template first');
+      return;
+    }
+    if (selection.length === 0) {
+      displayMsg('Please select contacts first');
+      return;
+    }
+    if (!subject) {
+      displayMsg('Please enter the subject first');
+      return;
+    }
+    const data = await Promise.all(
+      selection.map((selectionId) =>
+        fetch(
+          `/admin/contacts/${selectionId}?templateId=${templateId}&subject=${subject}`,
+          {
+            method: 'POST',
+          },
+        ),
+      ),
+    );
+    if (data.every((item) => item.ok)) {
+      setSelection([]);
+      displayMsg('Emails Sent Successfully');
+    } else {
+      const failedEmails = data.filter((item) => !item.ok).join(', ');
+      displayMsg(
+        `Something went wrong with some emails ${[
+          failedEmails,
+        ]}, please try again`,
+      );
+    }
+  };
+
   return (
     <ScrollArea>
       <Flex className={classes.headerContainer}>
@@ -138,7 +185,26 @@ export default function Contacts() {
         </Title>
         <PaginationWithSearch pagination={pagination} />
       </Flex>
-
+      <Flex justify="flex-end">
+        <Button onClick={handleSendEmail}>Send Emails</Button>
+        <Space w={rem(10)} />
+        <TextInput
+          w={rem(300)}
+          variant="filled"
+          placeholder="Subject for Email"
+          onChange={(event) => setSubject(event.target.value)}
+          value={subject}
+        />
+        <Space w={rem(10)} />
+        <Select
+          w={rem(300)}
+          variant="filled"
+          placeholder="Template for sending email"
+          onChange={(value) => setTemplateId(value)}
+          value={templateId}
+          data={templates}
+        />
+      </Flex>
       <Table miw={800} verticalSpacing="sm">
         <thead>
           <tr>

@@ -11,6 +11,7 @@ export const UserProfileSchema = z.object({
   marksPost: z.number().optional(),
   resume: z.string(),
   userId: z.string(),
+  linkedin: z.string().url().optional(),
 });
 
 export const ProjectSchema = z.object({

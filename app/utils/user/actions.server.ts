@@ -22,6 +22,7 @@ export const ProfileAction: ActionFunction = async ({ request }) => {
   const marks12 = Number(form.get('marks12'));
   const marksGrad = Number(form.get('marksGrad'));
   const marksPost = Number(form.get('marksPost'));
+  const linkedin = form.get('linkedin') as string;
   const resume = form.get('resume') as string;
 
   const userProfile = {
@@ -33,6 +34,7 @@ export const ProfileAction: ActionFunction = async ({ request }) => {
     marksGrad,
     marksPost,
     resume,
+    linkedin,
     userId,
   };
   UserProfileSchema.parse(userProfile);

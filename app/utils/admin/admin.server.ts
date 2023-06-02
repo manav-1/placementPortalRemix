@@ -1,5 +1,6 @@
 import { prisma } from 'prisma/prisma.server';
 import { json } from '@remix-run/node';
+import Handlebars from 'handlebars';
 import type { AddOpportunityType, ContactType, UpdateUserType } from './types';
 import { loadTemplate, sendmail } from '../mail/mail.server';
 

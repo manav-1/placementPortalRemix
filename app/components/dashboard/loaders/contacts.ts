@@ -42,9 +42,15 @@ export const contactsLoader: LoaderFunction = async ({ request }) => {
         },
       },
     });
+
+    const templates = await prisma.emailTemplates.findMany();
     return json({
       ...user,
       contacts,
+      templates: templates.map((item) => ({
+        label: item.name,
+        value: item.id,
+      })),
       pagination: {
         page,
         perPage,

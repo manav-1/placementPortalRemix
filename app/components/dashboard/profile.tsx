@@ -103,6 +103,7 @@ export default function Profile() {
       marksGrad: userProfile?.marksGrad,
       marksPost: userProfile?.marksPost,
       resume: userProfile?.resume,
+      linkedin: userProfile?.linkedin,
     },
     validate: {
       firstName: isNotEmpty('First Name is required'),
@@ -216,6 +217,14 @@ export default function Profile() {
             mt="md"
             variant="filled"
             {...profileForm.getInputProps('marksPost')}
+          />
+          <TextInput
+            label="Enter Linkedin URL"
+            placeholder="https://linkedin.com/in/username"
+            name="linkedin"
+            mt="md"
+            variant="filled"
+            {...profileForm.getInputProps('linkedin')}
           />
           <TextWithDropzone
             label="Resume URL"
